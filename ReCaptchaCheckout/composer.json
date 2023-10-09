@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-re-captcha-checkout",
-    "description": "Google reCAPTCHA integration for Magento2",
-    "require": {
-        "php": "~8.1.0||~8.2.0",
-        "magento/framework": "*",
-        "magento/module-checkout": "*",
-        "magento/module-re-captcha-ui": "*",
-        "magento/module-re-captcha-validation-api": "*",
-        "magento/module-re-captcha-admin-ui": "*",
-        "magento/module-re-captcha-frontend-ui": "*",
-        "magento/module-re-captcha-webapi-api": "*",
-        "magento/module-re-captcha-webapi-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReCaptchaCheckout\\": ""
-        }
+  "name": "mage-os/module-re-captcha-checkout",
+  "description": "Google reCAPTCHA integration for Magento2",
+  "require": {
+    "php": "~8.1.0||~8.2.0",
+    "mage-os/framework": "1.0.0",
+    "mage-os/module-checkout": "1.0.0",
+    "mage-os/module-re-captcha-ui": "1.0.0",
+    "mage-os/module-re-captcha-validation-api": "1.0.0",
+    "mage-os/module-re-captcha-admin-ui": "1.0.0",
+    "mage-os/module-re-captcha-frontend-ui": "1.0.0",
+    "mage-os/module-re-captcha-webapi-api": "1.0.0",
+    "mage-os/module-re-captcha-webapi-ui": "1.0.0"
+  },
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Magento\\ReCaptchaCheckout\\": ""
     }
+  },
+  "version": "1.0.0",
+  "replace": {
+    "magento/module-re-captcha-checkout": "1.1.3"
+  }
 }
