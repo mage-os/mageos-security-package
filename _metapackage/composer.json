@@ -11,6 +11,7 @@
         "magento/module-re-captcha-migration": "*",
         "magento/module-re-captcha-newsletter": "*",
         "magento/module-re-captcha-paypal": "*",
+        "magento/module-re-captcha-resend-confirmation-email": "*",
         "magento/module-re-captcha-review": "*",
         "magento/module-re-captcha-send-friend": "*",
         "magento/module-re-captcha-store-pickup": "*",
@@ -25,9 +26,10 @@
         "magento/module-re-captcha-webapi-rest": "*",
         "magento/module-re-captcha-webapi-graph-ql": "*",
         "magento/module-re-captcha-webapi-ui": "*",
+        "magento/module-re-captcha-wishlist": "*",
         "magento/module-securitytxt": "*",
         "magento/module-two-factor-auth": "*",
-        "google/recaptcha": "^1.2",
+        "phpfui/recaptcha": "^2.0.0",
         "magento/module-re-captcha-checkout-sales-rule": "*"
     }
 }

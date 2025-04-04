@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
  */
 declare(strict_types=1);
 
@@ -72,8 +72,8 @@ class ReCaptchaV3 implements ResolverInterface, ResetAfterRequestInterface
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         return [
             'is_enabled' => $this->isEnabled(),
@@ -82,7 +82,8 @@ class ReCaptchaV3 implements ResolverInterface, ResetAfterRequestInterface
             'badge_position' => $this->reCaptchaV3Config->getBadgePosition(),
             'language_code' => $this->reCaptchaV3Config->getLanguageCode(),
             'failure_message' => $this->getFailureMessage(),
-            'forms' => $this->getEnumFormTypes()
+            'forms' => $this->getEnumFormTypes(),
+            'theme' => $this->reCaptchaV3Config->getTheme()
         ];
     }
 
