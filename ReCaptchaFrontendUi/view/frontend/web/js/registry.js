@@ -4,7 +4,7 @@
  */
 
 define(['ko'], function (ko) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return {
         ids: ko.observableArray([]),

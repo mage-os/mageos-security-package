@@ -4,15 +4,15 @@
  */
 
 define([], function () {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return function (originalFunction) {
         /**
          * {@inheritDoc}
          */
-       originalFunction.addListener = function (id , func) {
+        originalFunction.addListener = function (id , func) {
             this._listeners[id] = func;
-       };
+        };
 
         return originalFunction;
     };

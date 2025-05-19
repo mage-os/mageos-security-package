@@ -9,7 +9,7 @@ define(
         'jquery'
     ],
     function (Component, $) {
-        'use strict';
+        'use strict'; // eslint-disable-line
 
         var reCaptchaIds = new WeakMap(),
             uuid = 0;

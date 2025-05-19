@@ -8,7 +8,7 @@ define([
     'jquery',
     'jquery/z-index'
 ], function ($) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     var reCaptchaEntities = [],
         initialized = false,

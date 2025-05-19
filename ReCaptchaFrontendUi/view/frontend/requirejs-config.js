@@ -5,7 +5,7 @@
 
 /*eslint strict: ["error", "global"]*/
 
-'use strict';
+'use strict'; // eslint-disable-line
 
 var config = {
     config: {

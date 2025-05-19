@@ -4,7 +4,7 @@
  */
 
 define(['Magento_ReCaptchaFrontendUi/js/reCaptcha'], function (reCaptcha) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return reCaptcha.extend({
 

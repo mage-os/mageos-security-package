@@ -14,7 +14,7 @@ define(
         'Magento_ReCaptchaFrontendUi/js/reCaptchaScriptLoader',
         'Magento_ReCaptchaFrontendUi/js/nonInlineReCaptchaRenderer'
     ], function (Component, $, ko, _, registry, reCaptchaLoader, nonInlineReCaptchaRenderer) {
-        'use strict';
+        'use strict'; // eslint-disable-line
 
         return Component.extend({
 

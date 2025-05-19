@@ -9,7 +9,7 @@ define(
         'jquery'
     ],
     function (Component, $) {
-        'use strict';
+        'use strict'; // eslint-disable-line
 
         return Component.extend({
 

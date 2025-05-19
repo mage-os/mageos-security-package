@@ -7,7 +7,7 @@ define([
     'jquery',
     'Magento_Checkout/js/model/payment/additional-validators'
 ], function ($, additionalValidators) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return function (originalComponent) {
         return originalComponent.extend({

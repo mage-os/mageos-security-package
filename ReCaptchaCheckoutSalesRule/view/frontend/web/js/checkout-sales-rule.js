@@ -14,7 +14,7 @@ define(
         'Magento_Checkout/js/model/quote',
         'ko'
     ], function (Component, recaptchaRegistry, $, setCouponCodeAction, cancelCouponAction, quote, ko) {
-        'use strict';
+        'use strict'; // eslint-disable-line
 
         var totals = quote.getTotals(),
             couponCode = ko.observable(null),
@@ -87,4 +87,5 @@ define(
                 });
             }
         });
-    });
+    }
+);

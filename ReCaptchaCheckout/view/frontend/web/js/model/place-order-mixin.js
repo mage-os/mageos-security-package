@@ -10,7 +10,7 @@ define([
     'mage/utils/wrapper',
     'Magento_ReCaptchaWebapiUi/js/webapiReCaptchaRegistry'
 ], function ($, wrapper, recaptchaRegistry) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return function (placeOrder) {
         return wrapper.wrap(placeOrder, function (originalAction, serviceUrl, payload, messageContainer) {
