@@ -50,6 +50,8 @@ class InjectRecaptchaInAuthenticationPopup
     }
 
     /**
+     * Inject reCAPTCHA in authentication popup layout
+     *
      * @param AuthenticationPopup $subject
      * @param string $result
      * @return string

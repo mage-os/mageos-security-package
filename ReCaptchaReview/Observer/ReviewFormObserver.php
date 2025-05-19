@@ -16,9 +16,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * ReviewFormObserver
- */
 class ReviewFormObserver implements ObserverInterface
 {
     /**
@@ -52,6 +49,8 @@ class ReviewFormObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha enabled for product review, validate it
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

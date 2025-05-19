@@ -33,6 +33,7 @@ interface ValidationConfigInterface
      * Get validation failure message TODO
      *
      * @deprecated use TODO
+     * @see not used anymore
      * @return string
      */
     public function getValidationFailureMessage(): string;

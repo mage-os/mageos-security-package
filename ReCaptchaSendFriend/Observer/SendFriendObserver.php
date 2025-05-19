@@ -16,9 +16,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * SendFriendObserver
- */
 class SendFriendObserver implements ObserverInterface
 {
     /**
@@ -52,6 +49,8 @@ class SendFriendObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha enabled for sendfriend, validate it
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

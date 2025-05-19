@@ -16,9 +16,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * NewsletterObserver
- */
 class NewsletterObserver implements ObserverInterface
 {
     /**
@@ -52,6 +49,8 @@ class NewsletterObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha is enabled for newsletter, validate the captcha
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

@@ -14,7 +14,6 @@ use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 
-
 /**
  * Test class for Magento\Customer\Api\AccountManagementInterface
  *
@@ -133,5 +132,4 @@ class AccountManagementCaptchaTest extends WebapiAbstract
 
         $this->_webApiCall($serviceInfo, $requestData);
     }
-
 }

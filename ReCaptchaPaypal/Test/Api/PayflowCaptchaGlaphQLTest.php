@@ -75,5 +75,4 @@ QUERY;
 
         $this->graphQlMutation($query);
     }
-
 }

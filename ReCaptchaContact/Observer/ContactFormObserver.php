@@ -16,9 +16,6 @@ use Magento\Framework\UrlInterface;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * ContactFormObserver
- */
 class ContactFormObserver implements ObserverInterface
 {
     /**
@@ -52,6 +49,8 @@ class ContactFormObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha is enabled for contact form and if so, validate the captcha
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

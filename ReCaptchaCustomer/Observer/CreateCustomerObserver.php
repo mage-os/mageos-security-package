@@ -15,9 +15,6 @@ use Magento\Framework\UrlInterface;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * CreateCustomerObserver
- */
 class CreateCustomerObserver implements ObserverInterface
 {
     /**
@@ -51,6 +48,8 @@ class CreateCustomerObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha is enabled for customer create form and if so, validate the captcha
+     *
      * @param Observer $observer
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException

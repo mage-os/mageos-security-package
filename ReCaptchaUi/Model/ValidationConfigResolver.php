@@ -45,7 +45,7 @@ class ValidationConfigResolver implements ValidationConfigResolverInterface
         foreach ($validationConfigProviders as $validationConfigProvider) {
             if (!$validationConfigProvider instanceof ValidationConfigProviderInterface) {
                 throw new InputException(
-                    __('Validation config provider must implement %1.', [ConfigProviderInterface::class])
+                    __('Validation config provider must implement %1.', [ValidationConfigProviderInterface::class])
                 );
             }
         }

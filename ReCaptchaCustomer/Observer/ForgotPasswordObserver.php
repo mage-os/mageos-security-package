@@ -16,9 +16,6 @@ use Magento\Framework\UrlInterface;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * ForgotPasswordObserver
- */
 class ForgotPasswordObserver implements ObserverInterface
 {
     /**
@@ -52,6 +49,8 @@ class ForgotPasswordObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha is enabled for customer forgot password form and if so, validate the captcha
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

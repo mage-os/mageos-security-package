@@ -39,7 +39,7 @@ class ReviewFormTest extends AbstractController
     private $formKey;
 
     /**
-     * @var
+     * @var ReviewResourceModel
      */
     private $reviewResourceModel;
 

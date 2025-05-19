@@ -70,6 +70,8 @@ class MigrateConfigToRecaptchaModules implements DataPatchInterface, PatchVersio
             $this->copyEnabledRecaptcha($scope);
             $this->disableLegacyRecaptcha($scope);
         }
+
+        return $this;
     }
 
     /**
