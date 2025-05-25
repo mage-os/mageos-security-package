@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaCustomer\Observer;
@@ -13,12 +14,11 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Session\SessionManagerInterface;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
 /**
- * LoginObserver
+ * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
  */
 class LoginObserver implements ObserverInterface
 {
@@ -61,6 +61,8 @@ class LoginObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha is enabled for customer login form and if so, validate the captcha
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

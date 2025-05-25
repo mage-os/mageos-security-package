@@ -1,12 +1,13 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 define([
     'jquery',
     'Magento_Checkout/js/model/payment/additional-validators'
 ], function ($, additionalValidators) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return function (originalComponent) {
         return originalComponent.extend({
