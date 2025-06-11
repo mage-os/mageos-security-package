@@ -1,10 +1,10 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
 
 define(['Magento_ReCaptchaFrontendUi/js/reCaptcha'], function (reCaptcha) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return reCaptcha.extend({
 
