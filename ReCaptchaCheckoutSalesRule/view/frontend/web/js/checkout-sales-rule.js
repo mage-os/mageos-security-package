@@ -1,7 +1,8 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2021 Adobe
+ * All Rights Reserved.
  */
+
 /* global grecaptcha */
 define(
     [
@@ -13,7 +14,7 @@ define(
         'Magento_Checkout/js/model/quote',
         'ko'
     ], function (Component, recaptchaRegistry, $, setCouponCodeAction, cancelCouponAction, quote, ko) {
-        'use strict';
+        'use strict'; // eslint-disable-line
 
         var totals = quote.getTotals(),
             couponCode = ko.observable(null),
@@ -86,4 +87,5 @@ define(
                 });
             }
         });
-    });
+    }
+);
