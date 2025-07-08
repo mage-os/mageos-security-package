@@ -4,4 +4,4 @@ Google reCAPTCHA ensures that a human being, rather than a computer (or "bot"), 
 
 This module provides the reCAPTCHA implementations related to resend confirmation email action.
 
-For more information, see the [document for reCAPTCHA]((https://experienceleague.adobe.com/en/docs/commerce-admin/systems/security/captcha/security-google-recaptcha)).
+For more information, see the [document for reCAPTCHA](https://experienceleague.adobe.com/en/docs/commerce-admin/systems/security/captcha/security-google-recaptcha).
