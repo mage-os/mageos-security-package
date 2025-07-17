@@ -26,6 +26,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Request Handler Test
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RequestHandlerTest extends TestCase
 {
     /**
