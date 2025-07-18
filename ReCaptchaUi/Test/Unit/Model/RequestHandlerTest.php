@@ -27,7 +27,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
- * Request Handler Test
+ * Unit test for RequestHandler class
+ *
+ * Tests the reCAPTCHA request handling functionality including validation,
+ * error handling, and response processing for various scenarios.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
