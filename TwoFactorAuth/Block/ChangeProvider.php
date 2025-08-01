@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2025 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Block;
@@ -58,16 +59,8 @@ class ChangeProvider extends Template
     /**
      * @inheritDoc
      */
-    protected function _toHtml()
+    protected function _toHtml()//phpcs:disable
     {
-        $toActivate = $this->tfa->getProvidersToActivate($this->userContext->getUserId());
-
-        foreach ($toActivate as $toActivateProvider) {
-            if ($toActivateProvider->getCode() === $this->getData('provider')) {
-                return '';
-            }
-        }
-
         return parent::_toHtml();
     }
 
@@ -78,17 +71,20 @@ class ChangeProvider extends Template
     {
         $providers = [];
         foreach ($this->getProvidersList() as $provider) {
+            $authUrl = $this->getUrl($provider->getAuthAction());
+            $isConfigured = true;
             if (!$provider->isActive($this->userContext->getUserId())) {
-                continue;
+                $authUrl = $this->getUrl($provider->getConfigureAction());
+                $isConfigured = false;
             }
             $providers[] = [
                 'code' => $provider->getCode(),
                 'name' => $provider->getName(),
-                'auth' => $this->getUrl($provider->getAuthAction()),
+                'auth' => $authUrl,
                 'icon' => $this->getViewFileUrl($provider->getIcon()),
+                'is_configured' => $isConfigured
             ];
         }
-
         $this->jsLayout['components']['tfa-change-provider']['switchIcon'] =
             $this->getViewFileUrl('Magento_TwoFactorAuth::images/change_provider.png');
         $this->jsLayout['components']['tfa-change-provider']['providers'] = $providers;

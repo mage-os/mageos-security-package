@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe.
+ * All rights reserved.
  */
 declare(strict_types=1);
 
@@ -11,17 +11,20 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Backend\App\AbstractAction;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\ActionFlag;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\UrlInterface;
-use Magento\TwoFactorAuth\Controller\Adminhtml\Tfa\Configure;
 use Magento\TwoFactorAuth\Controller\Adminhtml\Tfa\Index;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Api\TfaSessionInterface;
 use Magento\TwoFactorAuth\Api\UserConfigRequestManagerInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\Tfa\Requestconfig;
 use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
+use Magento\TwoFactorAuth\Model\Config\UserNotifier;
+use Magento\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
+use Magento\TwoFactorAuth\Api\TfaProviderSessionInterface;
 
 /**
  * Handle redirection to 2FA page if required
@@ -33,12 +36,12 @@ class ControllerActionPredispatch implements ObserverInterface
     /**
      * @var TfaInterface
      */
-    private $tfa;
+    private TfaInterface $tfa;
 
     /**
      * @var TfaSessionInterface
      */
-    private $tfaSession;
+    private TfaSessionInterface $tfaSession;
 
     /**
      * @var UserConfigRequestManagerInterface
@@ -53,27 +56,42 @@ class ControllerActionPredispatch implements ObserverInterface
     /**
      * @var HtmlAreaTokenVerifier
      */
-    private $tokenManager;
+    private HtmlAreaTokenVerifier $tokenManager;
 
     /**
      * @var ActionFlag
      */
-    private $actionFlag;
+    private ActionFlag $actionFlag;
 
     /**
      * @var UrlInterface
      */
-    private $url;
+    private UrlInterface $url;
 
     /**
      * @var AuthorizationInterface
      */
-    private $authorization;
+    private AuthorizationInterface $authorization;
 
     /**
      * @var UserContextInterface
      */
-    private $userContext;
+    private UserContextInterface $userContext;
+
+    /**
+     * @var UserNotifier
+     */
+    private UserNotifier $userNotifier;
+
+    /**
+     * @var UserConfigTokenManagerInterface
+     */
+    private UserConfigTokenManagerInterface $userConfigTokenManagerInterface;
+
+    /**
+     * @var TfaProviderSessionInterface
+     */
+    private TfaProviderSessionInterface $tfaProviderSessionInterface;
 
     /**
      * @param TfaInterface $tfa
@@ -84,6 +102,10 @@ class ControllerActionPredispatch implements ObserverInterface
      * @param UrlInterface $url
      * @param AuthorizationInterface $authorization
      * @param UserContextInterface $userContext
+     * @param UserNotifier|null $userNotifier
+     * @param UserConfigTokenManagerInterface|null $userConfigTokenManagerInterface
+     * @param TfaProviderSessionInterface|null $tfaProviderSessionInterface
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         TfaInterface $tfa,
@@ -93,7 +115,10 @@ class ControllerActionPredispatch implements ObserverInterface
         ActionFlag $actionFlag,
         UrlInterface $url,
         AuthorizationInterface $authorization,
-        UserContextInterface $userContext
+        UserContextInterface $userContext,
+        ?UserNotifier $userNotifier = null,
+        ?UserConfigTokenManagerInterface $userConfigTokenManagerInterface = null,
+        ?TfaProviderSessionInterface $tfaProviderSessionInterface = null
     ) {
         $this->tfa = $tfa;
         $this->tfaSession = $tfaSession;
@@ -103,6 +128,11 @@ class ControllerActionPredispatch implements ObserverInterface
         $this->url = $url;
         $this->authorization = $authorization;
         $this->userContext = $userContext;
+        $this->userNotifier = $userNotifier ?: ObjectManager::getInstance()->get(UserNotifier::class);
+        $this->userConfigTokenManagerInterface = $userConfigTokenManagerInterface ?:
+            ObjectManager::getInstance()->get(UserConfigTokenManagerInterface::class);
+        $this->tfaProviderSessionInterface = $tfaProviderSessionInterface ?:
+            ObjectManager::getInstance()->get(TfaProviderSessionInterface::class);
     }
 
     /**
@@ -137,18 +167,30 @@ class ControllerActionPredispatch implements ObserverInterface
         }
 
         if ($userId) {
-            $configurationStillRequired = $this->configRequestManager->isConfigurationRequiredFor($userId);
-            $toActivate = $this->tfa->getProvidersToActivate($userId);
-            $toActivateCodes = [];
-            foreach ($toActivate as $toActivateProvider) {
-                $toActivateCodes[] = $toActivateProvider->getCode();
+            $userProviders = $this->tfa->getUserProviders($userId);
+            $activatedProvider = [];
+
+            foreach ($userProviders as $userProvider) {
+                if ($userProvider->isActive($userId)) {
+                    $activatedProvider[] = $userProvider; //list of all activated providers of user
+                }
             }
             $accessGranted = $this->tfaSession->isGranted();
 
-            if (!$accessGranted && $configurationStillRequired) {
+            if (!$accessGranted && !empty($userProviders)) {
                 //User needs special link with a token to be allowed to configure 2FA
                 if ($this->authorization->isAllowed(Requestconfig::ADMIN_RESOURCE)) {
-                    $this->redirect('tfa/tfa/requestconfig');
+                    if (empty($activatedProvider)) {
+                        $this->tfaProviderSessionInterface->setNewProviderConfigurationAllowed(
+                            TfaProviderSessionInterface::ALLOW
+                        );
+                        $this->redirect('tfa/tfa/requestconfig');
+                    } else {
+                        $url = $this->userNotifier->getPersonalRequestConfigUrl(
+                            $this->userConfigTokenManagerInterface->issueFor($userId)
+                        );
+                        $this->redirect($url);
+                    }
                 } else {
                     $this->redirect('tfa/tfa/accessdenied');
                 }

@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe.
+ * All Rights Reserved.
  */
 
 .login-content > li {
@@ -10,4 +10,7 @@
     position: absolute;
     top: 1em;
     right: 1em;
+}
+.tfa-provider-link {
+    color: #333;
 }

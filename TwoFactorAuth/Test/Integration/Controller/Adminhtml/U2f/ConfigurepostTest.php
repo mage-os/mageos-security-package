@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe.
+ * All Rights Reserved.
  */
 
 declare(strict_types=1);
@@ -20,12 +20,12 @@ use Magento\TwoFactorAuth\TestFramework\TestCase\AbstractConfigureBackendControl
 class ConfigurepostTest extends AbstractConfigureBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/u2f/configurepost';
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $httpMethod = Request::METHOD_POST;
 
@@ -36,6 +36,7 @@ class ConfigurepostTest extends AbstractConfigureBackendController
     public function testTokenAccess(): void
     {
         parent::testTokenAccess();
+        $this->assertRedirect($this->stringContains('requestconfig'));
     }
 
     /**
@@ -44,6 +45,7 @@ class ConfigurepostTest extends AbstractConfigureBackendController
      */
     public function testAclHasAccess()
     {
+        $this->expectedNoAccessResponseCode = 200;
         parent::testAclHasAccess();
     }
 

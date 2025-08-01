@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Controller\Adminhtml\U2f;
@@ -27,17 +28,17 @@ class Configure extends AbstractConfigureAction implements HttpGetActionInterfac
     /**
      * @var Tfa
      */
-    private $tfa;
+    private Tfa $tfa;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var PageFactory
      */
-    private $pageFactory;
+    private PageFactory $pageFactory;
 
     /**
      * @param Tfa $tfa

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe.
+ * All rights reserved.
  */
 
 declare(strict_types=1);
@@ -69,5 +69,16 @@ class UserNotifier
     private function getRequestConfigUrl(string $tfaToken)
     {
         return $this->url->getUrl('tfa/tfa/index', ['tfat' => $tfaToken]);
+    }
+
+    /**
+     * Get the url to send to the user for configuring new 2fa provider
+     *
+     * @param string $tfaToken
+     * @return string
+     */
+    public function getIdentityVerificationUrl(string $tfaToken): string
+    {
+        return $this->url->getUrl('tfa/tfa/verifyidentityrequest', ['tfat' => $tfaToken]);
     }
 }

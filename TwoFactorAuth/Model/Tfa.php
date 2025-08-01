@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe.
+ * All rights reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Model;
@@ -172,7 +173,9 @@ class Tfa implements TfaInterface
                 'tfa_tfa_configurelater',
                 'tfa_tfa_configure',
                 'tfa_tfa_configurepost',
-                'tfa_tfa_index'
+                'tfa_tfa_index',
+                'tfa_tfa_verifyidentity',
+                'tfa_tfa_verifyidentityrequest'
             ];
 
             $providers = $this->getAllProviders();
@@ -208,6 +211,7 @@ class Tfa implements TfaInterface
 
     /**
      * @inheritdoc
+     * @SuppressWarnings(PHPMD.BooleanGetMethodName)
      */
     public function getProviderIsAllowed(int $userId, string $providerCode): bool
     {
