@@ -1,25 +1,29 @@
 {
-    "name": "magento/module-re-captcha-paypal",
-    "description": "Google reCaptcha integration for Magento2 PayPal PayflowPro payment form",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-re-captcha-ui": "*",
-        "magento/module-re-captcha-validation-api": "*",
-        "magento/module-checkout": "*",
-        "magento/module-re-captcha-webapi-api": "*",
-        "magento/module-quote": "*",
-        "magento/module-paypal": "*",
-        "magento/module-re-captcha-checkout": "*"
-    },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReCaptchaPaypal\\": ""
-        }
+  "name": "mage-os/module-re-captcha-paypal",
+  "description": "Google reCaptcha integration for Magento2 PayPal PayflowPro payment form",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.3.0",
+    "mage-os/module-re-captcha-ui": "1.3.0",
+    "mage-os/module-re-captcha-validation-api": "1.3.0",
+    "mage-os/module-checkout": "1.3.0",
+    "mage-os/module-re-captcha-webapi-api": "1.3.0",
+    "mage-os/module-quote": "1.3.0",
+    "mage-os/module-paypal": "1.3.0",
+    "mage-os/module-re-captcha-checkout": "1.3.0"
+  },
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Magento\\ReCaptchaPaypal\\": ""
     }
+  },
+  "version": "1.3.0",
+  "replace": {
+    "magento/module-re-captcha-paypal": "1.1.5"
+  }
 }
