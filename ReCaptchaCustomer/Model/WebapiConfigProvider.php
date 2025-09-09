@@ -8,6 +8,11 @@ declare(strict_types=1);
 
 namespace Magento\ReCaptchaCustomer\Model;
 
+use Magento\CustomerGraphQl\Model\Resolver\ChangePassword;
+use Magento\CustomerGraphQl\Model\Resolver\RequestPasswordResetEmail;
+use Magento\CustomerGraphQl\Model\Resolver\ResetPassword;
+use Magento\CustomerGraphQl\Model\Resolver\UpdateCustomer;
+use Magento\Framework\Exception\InputException;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\ValidationConfigResolverInterface;
 use Magento\ReCaptchaValidationApi\Api\Data\ValidationConfigInterface;
@@ -21,7 +26,7 @@ class WebapiConfigProvider implements WebapiValidationConfigProviderInterface
 {
     private const RESET_PASSWORD_CAPTCHA_ID = 'customer_forgot_password';
 
-    private const CHANGE_PASSWORD_CAPTCHA_ID = 'customer_edit';
+    private const CUSTOMER_EDIT_CAPTCHA_ID = 'customer_edit';
 
     private const LOGIN_CAPTCHA_ID = 'customer_login';
 
@@ -53,25 +58,47 @@ class WebapiConfigProvider implements WebapiValidationConfigProviderInterface
      * @param string $serviceMethod
      * @param string $serviceClass
      * @return ValidationConfigInterface|null
+     * @throws InputException
      */
     private function validateChangePasswordCaptcha($serviceMethod, $serviceClass): ?ValidationConfigInterface
     {
-        //phpcs:disable Magento2.PHP.LiteralNamespaces
-        if ($serviceMethod === 'resetPassword' || $serviceMethod === 'initiatePasswordReset'
-            || $serviceClass === 'Magento\CustomerGraphQl\Model\Resolver\ResetPassword'
-            || $serviceClass === 'Magento\CustomerGraphQl\Model\Resolver\RequestPasswordResetEmail'
-        ) {
-            return $this->isEnabled->isCaptchaEnabledFor(self::RESET_PASSWORD_CAPTCHA_ID) ?
-                $this->configResolver->get(self::RESET_PASSWORD_CAPTCHA_ID) : null;
-        } elseif ($serviceMethod === 'changePasswordById'
-            || $serviceClass === 'Magento\CustomerGraphQl\Model\Resolver\ChangePassword'
-        ) {
-            return $this->isEnabled->isCaptchaEnabledFor(self::CHANGE_PASSWORD_CAPTCHA_ID) ?
-                $this->configResolver->get(self::CHANGE_PASSWORD_CAPTCHA_ID) : null;
+        if ($this->isResetPasswordCase($serviceMethod, $serviceClass)) {
+            $captchaId = self::RESET_PASSWORD_CAPTCHA_ID;
+        } elseif ($this->isChangePasswordCase($serviceMethod, $serviceClass)) {
+            $captchaId = self::CUSTOMER_EDIT_CAPTCHA_ID;
         }
-        //phpcs:enable Magento2.PHP.LiteralNamespaces
+
+        if (isset($captchaId) && $this->isEnabled->isCaptchaEnabledFor($captchaId)) {
+            return $this->configResolver->get($captchaId);
+        }
 
         return null;
+    }
+
+    /**
+     * Check if the request is related to reset password
+     *
+     * @param string $serviceMethod
+     * @param string $serviceClass
+     * @return bool
+     */
+    private function isResetPasswordCase(string $serviceMethod, string $serviceClass): bool
+    {
+        return in_array($serviceMethod, ['resetPassword', 'initiatePasswordReset'], true)
+            || in_array($serviceClass, [ResetPassword::class, RequestPasswordResetEmail::class], true);
+    }
+
+    /**
+     * Check if the request is related to change password
+     *
+     * @param string $serviceMethod
+     * @param string $serviceClass
+     * @return bool
+     */
+    private function isChangePasswordCase(string $serviceMethod, string $serviceClass): bool
+    {
+        return $serviceMethod === 'changePasswordById'
+            || in_array($serviceClass, [ChangePassword::class, UpdateCustomer::class], true);
     }
 
     /**
