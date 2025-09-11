@@ -1,26 +1,30 @@
 {
-    "name": "magento/module-re-captcha-checkout-sales-rule",
-    "description": "Google ReCaptcha integration for Magento2 coupons",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-checkout": "*",
-        "magento/module-sales-rule": "*",
-        "magento/module-re-captcha-ui": "*",
-        "magento/module-re-captcha-validation-api": "*",
-        "magento/module-re-captcha-admin-ui": "*",
-        "magento/module-re-captcha-frontend-ui": "*",
-        "magento/module-re-captcha-webapi-api": "*",
-        "magento/module-re-captcha-webapi-ui": "*"
-    },
-    "type": "magento2-module",
-    "license": "OSL-3.0",
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\ReCaptchaCheckoutSalesRule\\": ""
-        }
+  "name": "mage-os/module-re-captcha-checkout-sales-rule",
+  "description": "Google ReCaptcha integration for Magento2 coupons",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "1.3.1",
+    "mage-os/module-checkout": "1.3.1",
+    "mage-os/module-sales-rule": "1.3.1",
+    "mage-os/module-re-captcha-ui": "1.3.1",
+    "mage-os/module-re-captcha-validation-api": "1.3.1",
+    "mage-os/module-re-captcha-admin-ui": "1.3.1",
+    "mage-os/module-re-captcha-frontend-ui": "1.3.1",
+    "mage-os/module-re-captcha-webapi-api": "1.3.1",
+    "mage-os/module-re-captcha-webapi-ui": "1.3.1"
+  },
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Magento\\ReCaptchaCheckoutSalesRule\\": ""
+    }
+  },
+  "version": "1.3.1",
+  "replace": {
+    "magento/module-re-captcha-checkout-sales-rule": "1.1.4"
   }
 }
