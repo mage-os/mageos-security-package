@@ -1,4 +1,4 @@
-# Magento Two Factor Authentication
+# Magento_TwoFactorAuth module
 
 The Magento Admin provides all access to your store, orders, and customer data. To prevent unauthorized access to your data, all users who attempt to sign in to the Admin of your Magento installation must complete a second step to verify their identity.
 
