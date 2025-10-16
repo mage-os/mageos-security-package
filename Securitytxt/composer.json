@@ -1,29 +1,33 @@
 {
-    "name": "magento/module-securitytxt",
-    "description": "Security.txt file for Magento 2 websites",
-    "type": "magento2-module",
-    "require": {
-        "php": "~8.2.0||~8.3.0||~8.4.0",
-        "magento/framework": "*",
-        "magento/module-config": "*",
-        "magento/module-store": "*"
-    },
-    "authors": [
-        {
-            "name": "Kalpesh Mehta",
-            "email": "k@lpe.sh"
-        }
-    ],
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
-    "autoload": {
-        "files": [
-            "registration.php"
-        ],
-        "psr-4": {
-            "Magento\\Securitytxt\\": ""
-        }
+  "name": "mage-os/module-securitytxt",
+  "description": "Security.txt file for Magento 2 websites",
+  "type": "magento2-module",
+  "require": {
+    "php": "~8.2.0||~8.3.0||~8.4.0",
+    "mage-os/framework": "2.0.0",
+    "mage-os/module-config": "2.0.0",
+    "mage-os/module-store": "2.0.0"
+  },
+  "authors": [
+    {
+      "name": "Kalpesh Mehta",
+      "email": "k@lpe.sh"
     }
+  ],
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Magento\\Securitytxt\\": ""
+    }
+  },
+  "version": "2.0.0",
+  "replace": {
+    "magento/module-securitytxt": "1.1.4"
+  }
 }
