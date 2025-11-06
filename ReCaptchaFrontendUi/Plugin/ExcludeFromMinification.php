@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaFrontendUi\Plugin;
@@ -15,9 +16,11 @@ use Magento\Framework\View\Asset\Minification;
 class ExcludeFromMinification
 {
     /**
+     * Exclude external recaptcha from minification
+     *
      * @param Minification $subject
      * @param callable $proceed
-     * @param $contentType
+     * @param string $contentType
      * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

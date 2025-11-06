@@ -1,6 +1,6 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 /* eslint-disable max-nested-callbacks */
@@ -10,7 +10,7 @@ define([
     'mage/utils/wrapper',
     'Magento_ReCaptchaWebapiUi/js/webapiReCaptchaRegistry'
 ], function ($, wrapper, recaptchaRegistry) {
-    'use strict';
+    'use strict'; // eslint-disable-line
 
     return function (placeOrder) {
         return wrapper.wrap(placeOrder, function (originalAction, serviceUrl, payload, messageContainer) {

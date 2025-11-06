@@ -1,11 +1,11 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
 
 /*eslint strict: ["error", "global"]*/
 
-'use strict';
+'use strict'; // eslint-disable-line
 
 var config = {
     config: {

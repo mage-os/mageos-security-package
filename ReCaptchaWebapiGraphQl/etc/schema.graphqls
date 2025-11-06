@@ -1,6 +1,10 @@
-# Copyright 2024 Adobe All rights reserved.
-# See COPYING.txt for license details.
-
+#
+#
+# Copyright 2023 Adobe
+# All Rights Reserved.
+#
+#
+#
 type Query {
     recaptchaV3Config: ReCaptchaConfigurationV3 @resolver(class: "Magento\\ReCaptchaWebapiGraphQl\\Model\\Resolver\\ReCaptchaV3") @doc(description: "Returns details about Google reCAPTCHA V3-Invisible configuration.")
     recaptchaFormConfig(formType: ReCaptchaFormEnum!): ReCaptchaConfigOutput @resolver(class: "Magento\\ReCaptchaWebapiGraphQl\\Model\\Resolver\\ReCaptchaFormConfig")
