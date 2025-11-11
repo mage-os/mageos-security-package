@@ -8,10 +8,27 @@ declare(strict_types=1);
 
 namespace Magento\ReCaptchaCheckoutSalesRule\Test\Api;
 
+use Magento\Catalog\Test\Fixture\Product as ProductFixture;
+use Magento\Checkout\Test\Fixture\SetGuestEmail as SetGuestEmailFixture;
+use Magento\Checkout\Test\Fixture\SetShippingAddress;
+use Magento\Customer\Test\Fixture\Customer;
+use Magento\Framework\Exception\AuthenticationException;
+use Magento\Framework\Exception\EmailNotConfirmedException;
 use Magento\Framework\Webapi\Rest\Request;
-use Magento\Quote\Model\Quote;
+use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Test\Fixture\AddProductToCart;
+use Magento\Quote\Test\Fixture\CustomerCart;
+use Magento\Quote\Test\Fixture\GuestCart;
+use Magento\Quote\Test\Fixture\QuoteIdMask;
+use Magento\SalesRule\Test\Fixture\Rule as SalesRuleFixture;
+use Magento\TestFramework\Fixture\Config as ConfigFixture;
+use Magento\TestFramework\Fixture\DataFixture;
+use Magento\TestFramework\Fixture\DataFixtureStorage;
+use Magento\TestFramework\Fixture\DataFixtureStorageManager;
+use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
+use Throwable;
 
 /**
  * Test that Coupon APIs are covered with ReCaptcha
@@ -19,17 +36,21 @@ use Magento\TestFramework\TestCase\WebapiAbstract;
 class CouponApplyFormRecaptchaTest extends WebapiAbstract
 {
     private const API_ROUTE   = '/V1/carts/mine/coupons/%s';
-    private const COUPON_CODE = 'testCoupon';
 
     /**
-     * @var \Magento\TestFramework\ObjectManager
+     * @var CustomerTokenServiceInterface
      */
-    protected $objectManager;
+    private $customerTokenService;
 
     /**
      * @var QuoteFactory
      */
     private $quoteFactory;
+
+    /**
+     * @var DataFixtureStorage
+     */
+    private $fixtures;
 
     /**
      * @inheritDoc
@@ -39,78 +60,115 @@ class CouponApplyFormRecaptchaTest extends WebapiAbstract
         parent::setUp();
 
         $this->_markTestAsRestOnly();
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->quoteFactory = $this->objectManager->get(QuoteFactory::class);
+        $this->quoteFactory = Bootstrap::getObjectManager()->get(QuoteFactory::class);
+        $this->fixtures = Bootstrap::getObjectManager()->get(DataFixtureStorageManager::class)->getStorage();
+        $this->customerTokenService = Bootstrap::getObjectManager()->get(CustomerTokenServiceInterface::class);
     }
 
-    /**
-     * @magentoApiDataFixture Magento/Checkout/_files/quote.php
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @magentoConfigFixture default_store customer/captcha/enable 0
-     * @magentoConfigFixture base_website recaptcha_frontend/type_invisible/public_key test_public_key
-     * @magentoConfigFixture base_website recaptcha_frontend/type_invisible/private_key test_private_key
-     * @magentoConfigFixture base_website recaptcha_frontend/type_for/coupon_code invisible
-     */
+    #[
+        ConfigFixture('recaptcha_frontend/type_invisible/public_key', 'test_public_key'),
+        ConfigFixture('recaptcha_frontend/type_invisible/private_key', 'test_private_key'),
+        ConfigFixture('recaptcha_frontend/type_for/coupon_code', 'invisible'),
+        DataFixture(ProductFixture::class, as: 'product'),
+        DataFixture(Customer::class, as: 'customer'),
+        DataFixture(CustomerCart::class, ['customer_id' => '$customer.id$'], as: 'cart'),
+        DataFixture(
+            AddProductToCart::class,
+            ['cart_id' => '$cart.id$', 'product_id' => '$product.id$', 'qty' => 5],
+            'cart_item'
+        ),
+        DataFixture(SetShippingAddress::class, ['cart_id' => '$cart.id$']),
+        DataFixture(
+            SalesRuleFixture::class,
+            [
+                'coupon_code' => 'coupon%uniqid%',
+                'discount_amount' => 5.00,
+                'coupon_type' => 2,
+                'simple_action' => 'by_fixed'
+            ],
+            'sales_rule'
+        )
+    ]
     public function testRequired(): void
     {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage('{"message":"ReCaptcha validation failed, please try again"}');
+        $this->expectExceptionMessageMatches('/.*ReCaptcha validation failed, please try again.*/');
 
-        // get customer ID token
-        /** @var \Magento\Integration\Api\CustomerTokenServiceInterface $customerTokenService */
-        $customerTokenService = $this->objectManager->create(
-            \Magento\Integration\Api\CustomerTokenServiceInterface::class
-        );
-        $token = $customerTokenService->createCustomerAccessToken('customer@example.com', 'password');
-
-        /** @var Quote $quote */
-        $quote = $this->quoteFactory->create();
-        $quote->load('test_order_1', 'reserved_order_id');
-        $cartId = $quote->getId();
-
-        $api_url = sprintf(self::API_ROUTE, self::COUPON_CODE);
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => $api_url,
-                'httpMethod' => Request::HTTP_METHOD_PUT,
-                'token' => $token,
+        $this->_webApiCall(
+            [
+                'rest' => [
+                    'resourcePath' => sprintf(
+                        self::API_ROUTE,
+                        $this->fixtures->get('sales_rule')->getCouponCode()
+                    ),
+                    'httpMethod' => Request::HTTP_METHOD_PUT,
+                    'token' => $this->getCustomerAuthToken(
+                        $this->fixtures->get('customer')->getEmail()
+                    ),
+                ],
             ],
-        ];
-        $requestData = [
-            'cart_id' => $cartId
-        ];
+            [
+                'cart_id' => $this->fixtures->get('cart')->getId()
+            ]
+        );
+    }
 
-        $this->_webApiCall($serviceInfo, $requestData);
+    #[
+        ConfigFixture('recaptcha_frontend/type_invisible/public_key', 'test_public_key'),
+        ConfigFixture('recaptcha_frontend/type_invisible/private_key', 'test_private_key'),
+        ConfigFixture('recaptcha_frontend/type_for/coupon_code', 'invisible'),
+        DataFixture(ProductFixture::class, as: 'product'),
+        DataFixture(GuestCart::class, as: 'quote'),
+        DataFixture(QuoteIdMask::class, ['cart_id' => '$quote.id$'], 'cart_mask'),
+        DataFixture(SetGuestEmailFixture::class, ['cart_id' => '$quote.id$']),
+        DataFixture(
+            AddProductToCart::class,
+            ['cart_id' => '$quote.id$', 'product_id' => '$product.id$', 'qty' => 5],
+            'cart_item'
+        ),
+        DataFixture(SetShippingAddress::class, ['cart_id' => '$quote.id$']),
+        DataFixture(
+            SalesRuleFixture::class,
+            [
+                'coupon_code' => 'coupon%uniqid%',
+                'discount_amount' => 5.00,
+                'coupon_type' => 2,
+                'simple_action' => 'by_fixed'
+            ],
+            'sales_rule'
+        )
+    ]
+    public function testGuestCartTest(): void
+    {
+        $this->expectException(Throwable::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessageMatches('/.*ReCaptcha validation failed, please try again.*/');
+
+        $cartId = $this->fixtures->get('cart_mask')->getMaskedId();
+        $couponCode = $this->fixtures->get('sales_rule')->getCouponCode();
+        $this->_webApiCall(
+            [
+                'rest' => [
+                    'resourcePath' => "/V1/guest-carts/$cartId/coupons/" . $couponCode,
+                    'httpMethod' => Request::HTTP_METHOD_PUT,
+                    'token' => null
+                ],
+            ],
+            []
+        );
     }
 
     /**
-     * @magentoApiDataFixture Magento/Checkout/_files/quote.php
-     * @magentoConfigFixture default_store customer/captcha/enable 0
-     * @magentoConfigFixture base_website recaptcha_frontend/type_invisible/public_key test_public_key
-     * @magentoConfigFixture base_website recaptcha_frontend/type_invisible/private_key test_private_key
-     * @magentoConfigFixture base_website recaptcha_frontend/type_for/coupon_code invisible
+     * Get customer authentication token
+     *
+     * @param string $email
+     * @return string
+     * @throws AuthenticationException
+     * @throws EmailNotConfirmedException
      */
-    public function testGuestCartTest(): void
+    private function getCustomerAuthToken(string $email): string
     {
-        $this->expectException(\Throwable::class);
-        $this->expectExceptionCode(400);
-        $this->expectExceptionMessage('{"message":"ReCaptcha validation failed, please try again"}');
-
-        /** @var Quote $quote */
-        $quote = $this->quoteFactory->create();
-        $quote->load('test_order_1', 'reserved_order_id');
-        $cartId = $quote->getId();
-        $api_url = "/V1/guest-carts/$cartId/coupons/".self::COUPON_CODE;
-
-        $serviceInfo = [
-            'rest' => [
-                'resourcePath' => $api_url,
-                'httpMethod' => Request::HTTP_METHOD_PUT,
-                'token' => null
-            ],
-        ];
-        $requestData = [];
-        $this->_webApiCall($serviceInfo, $requestData);
+        return $this->customerTokenService->createCustomerAccessToken($email, 'password');
     }
 }

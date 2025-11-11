@@ -112,8 +112,8 @@ class RequestHandler implements RequestHandlerInterface
         try {
             $reCaptchaResponse = $this->captchaResponseResolver->resolve($request);
         } catch (InputException $e) {
-            $this->logger->error($e);
-            $this->processError($response, [], $redirectOnFailureUrl, $key);
+            $errorMessages['missing-input-response'] = $e->getMessage();
+            $this->processError($response, $errorMessages, $redirectOnFailureUrl, $key);
             return;
         }
 
