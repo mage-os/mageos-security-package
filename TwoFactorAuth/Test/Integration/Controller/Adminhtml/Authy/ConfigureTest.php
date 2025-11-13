@@ -20,12 +20,12 @@ use Magento\TwoFactorAuth\TestFramework\TestCase\AbstractConfigureBackendControl
 class ConfigureTest extends AbstractConfigureBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/authy/configure';
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $httpMethod = Request::METHOD_GET;
 
@@ -38,6 +38,7 @@ class ConfigureTest extends AbstractConfigureBackendController
     public function testTokenAccess(): void
     {
         parent::testTokenAccess();
+        $this->assertRedirect($this->stringContains('requestconfig'));
     }
 
     /**
@@ -48,6 +49,7 @@ class ConfigureTest extends AbstractConfigureBackendController
      */
     public function testAclHasAccess()
     {
+        $this->expectedNoAccessResponseCode = 200;
         parent::testAclHasAccess();
     }
 

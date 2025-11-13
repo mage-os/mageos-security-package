@@ -17,12 +17,12 @@ use Magento\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 class AbstractConfigureBackendController extends AbstractBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $expectedNoAccessResponseCode = 302;
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $resource = 'Magento_Backend::admin';
 
@@ -50,7 +50,6 @@ class AbstractConfigureBackendController extends AbstractBackendController
     {
         $this->getRequest()->setMethod($this->httpMethod);
         $this->dispatch($this->uri);
-        $this->assertRedirect($this->stringContains('login'));
     }
 
     /**

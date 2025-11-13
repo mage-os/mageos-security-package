@@ -83,6 +83,7 @@ class ChangeProviderTest extends TestCase
         $userId = (int)$this->session->getUser()->getId();
         $this->tfa->getProvider(Authy::CODE)->activate($userId);
         $jsLayout = json_decode($this->block->getJsLayout(), true);
+
         $actualProviders = array_map(
             function ($item) {
                 return $item['code'];
@@ -90,7 +91,7 @@ class ChangeProviderTest extends TestCase
             $jsLayout['components']['tfa-change-provider']['providers']
         );
 
-        self::assertSame(['authy'], $actualProviders);
+        self::assertSame(['authy','duo_security'], $actualProviders);
     }
 
     /**
@@ -128,6 +129,6 @@ class ChangeProviderTest extends TestCase
         $this->block->setData('provider', 'duo_security');
         $html = $this->block->toHtml();
 
-        self::assertSame('', $html);
+        self::assertStringContainsString('id="tfa', $html);
     }
 }

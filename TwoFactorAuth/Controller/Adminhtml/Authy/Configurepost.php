@@ -13,7 +13,6 @@ use Magento\Backend\App\Action;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\View\Result\PageFactory;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
@@ -29,29 +28,29 @@ use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
 class Configurepost extends AbstractConfigureAction implements HttpPostActionInterface
 {
     /**
-     * @var PageFactory
+     * @var JsonFactory
      */
-    private $jsonFactory;
+    private JsonFactory $jsonFactory;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var TfaInterface
      */
-    private $tfa;
+    private TfaInterface $tfa;
 
     /**
      * @var AlertInterface
      */
-    private $alert;
+    private AlertInterface $alert;
 
     /**
      * @var Authy\Verification
      */
-    private $verification;
+    private Authy\Verification $verification;
 
     /**
      * @param Action\Context $context
