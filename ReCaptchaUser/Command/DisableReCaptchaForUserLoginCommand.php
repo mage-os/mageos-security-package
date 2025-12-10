@@ -46,7 +46,7 @@ class DisableReCaptchaForUserLoginCommand extends Command
      * @inheritdoc
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->disableReCaptchaForUserLogin->execute();
 
