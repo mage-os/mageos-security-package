@@ -18,11 +18,15 @@ use Magento\ReCaptchaPaypal\Plugin\ReplayPayflowReCaptchaForPlaceOrder;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaValidationApi\Api\Data\ValidationConfigInterface;
 use Magento\ReCaptchaWebapiApi\Api\Data\EndpointInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var IsCaptchaEnabledInterface|MockObject
      */
@@ -59,15 +63,14 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->isCaptchaEnabled = $this->getMockForAbstractClass(IsCaptchaEnabledInterface::class);
+        $this->isCaptchaEnabled = $this->createMock(IsCaptchaEnabledInterface::class);
         $this->request = $this->createMock(Request::class);
         $this->reCaptchaSession = $this->createMock(ReCaptchaSession::class);
         $this->quoteIdMaskFactory = $this->createMock(QuoteIdMaskFactory::class);
-        $this->quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)
-            ->onlyMethods(['load'])
-            ->addMethods(['getQuoteId'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteIdMask = $this->createPartialMockWithReflection(
+            QuoteIdMask::class,
+            ['load', 'getQuoteId']
+        );
         $this->model = new ReplayPayflowReCaptchaForPlaceOrder(
             $this->isCaptchaEnabled,
             $this->request,
@@ -80,14 +83,14 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
      * @param array $mocks
      * @param bool $isResultNull
      * @param bool $isReturnNull
-     * @dataProvider afterGetConfigForDataProvider
      */
+    #[DataProvider('afterGetConfigForDataProvider')]
     public function testAfterGetConfigFor(array $mocks, bool $isResultNull, bool $isReturnNull): void
     {
         $this->configureMock($mocks);
         $subject = $this->createMock(WebapiConfigProvider::class);
-        $result = $this->getMockForAbstractClass(ValidationConfigInterface::class);
-        $endpoint = $this->getMockForAbstractClass(EndpointInterface::class);
+        $result = $this->createMock(ValidationConfigInterface::class);
+        $endpoint = $this->createMock(EndpointInterface::class);
         $this->assertSame(
             $isReturnNull ? null : $result,
             $this->model->afterGetConfigFor($subject, $isResultNull ? null : $result, $endpoint)
@@ -103,7 +106,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
             [
                 [
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::never()]
+                        ['method' => 'isValid', 'expects' => 'never']
                     ]
                 ],
                 true,
@@ -115,7 +118,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ['method' => 'isCaptchaEnabledFor', 'with' => 'paypal_payflowpro', 'willReturn' => false]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::never(),]
+                        ['method' => 'isValid', 'expects' => 'never']
                     ]
                 ],
                 false,
@@ -127,10 +130,10 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ['method' => 'isCaptchaEnabledFor', 'with' => 'paypal_payflowpro', 'willReturn' => true]
                     ],
                     'request' => [
-                        ['method' => 'getBodyParams', 'expects' => self::once(), 'willReturn' => []]
+                        ['method' => 'getBodyParams', 'expects' => 'once', 'willReturn' => []]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::never(),]
+                        ['method' => 'isValid', 'expects' => 'never']
                     ]
                 ],
                 false,
@@ -144,12 +147,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => 'checkmo']]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::never(), 'willReturn' => false]
+                        ['method' => 'isValid', 'expects' => 'never', 'willReturn' => false]
                     ]
                 ],
                 false,
@@ -163,12 +166,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => false]
+                        ['method' => 'isValid', 'expects' => 'once', 'with' => 1, 'willReturn' => false]
                     ]
                 ],
                 false,
@@ -182,12 +185,12 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => ['cartId' => 1, 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]]
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => 'once', 'with' => 1, 'willReturn' => true]
                     ]
                 ],
                 false,
@@ -201,7 +204,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => [
                                 'cart_id' => 1,
                                 'payment_method' => ['method' => Config::METHOD_PAYFLOWPRO]
@@ -209,7 +212,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 1, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => 'once', 'with' => 1, 'willReturn' => true]
                     ]
                 ],
                 false,
@@ -223,7 +226,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'request' => [
                         [
                             'method' => 'getBodyParams',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => [
                                 'cartId' => '17uc43rge98nc92',
                                 'paymentMethod' => ['method' => Config::METHOD_PAYFLOWPRO]
@@ -233,24 +236,24 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
                     'quoteIdMaskFactory' => [
                         [
                             'method' => 'create',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturnProperty' => 'quoteIdMask'
                         ]
                     ],
                     'quoteIdMask' => [
                         [
                             'method' => 'load',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturnSelf' => null
                         ],
                         [
                             'method' => 'getQuoteId',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => 2
                         ]
                     ],
                     'reCaptchaSession' => [
-                        ['method' => 'isValid', 'expects' => self::once(), 'with' => 2, 'willReturn' => true]
+                        ['method' => 'isValid', 'expects' => 'once', 'with' => 2, 'willReturn' => true]
                     ]
                 ],
                 false,
@@ -263,7 +266,15 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
     {
         foreach ($mocks as $prop => $propMocks) {
             foreach ($propMocks as $mock) {
-                $builder = $this->$prop->expects($mock['expects'] ?? $this->any());
+                $expectsValue = $mock['expects'] ?? 'any';
+                $expects = match ($expectsValue) {
+                    'never' => $this->never(),
+                    'once' => $this->once(),
+                    'any' => $this->any(),
+                    'atLeastOnce' => $this->atLeastOnce(),
+                    default => $this->any()
+                };
+                $builder = $this->$prop->expects($expects);
                 unset($mock['expects']);
                 foreach ($mock as $method => $args) {
                     if ($method === 'willReturnProperty') {
