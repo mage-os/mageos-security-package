@@ -267,13 +267,7 @@ class ReplayPayflowReCaptchaForPlaceOrderTest extends TestCase
         foreach ($mocks as $prop => $propMocks) {
             foreach ($propMocks as $mock) {
                 $expectsValue = $mock['expects'] ?? 'any';
-                $expects = match ($expectsValue) {
-                    'never' => $this->never(),
-                    'once' => $this->once(),
-                    'any' => $this->any(),
-                    'atLeastOnce' => $this->atLeastOnce(),
-                    default => $this->any()
-                };
+                $expects = $this->createInvocationMatcher($expectsValue);
                 $builder = $this->$prop->expects($expects);
                 unset($mock['expects']);
                 foreach ($mock as $method => $args) {
