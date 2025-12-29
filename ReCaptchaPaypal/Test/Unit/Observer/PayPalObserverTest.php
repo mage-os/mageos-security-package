@@ -23,15 +23,19 @@ use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\ValidationConfigResolverInterface;
 use Magento\ReCaptchaValidationApi\Api\ValidatorInterface;
 use Magento\ReCaptchaValidationApi\Model\ValidationErrorMessagesProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PayPalObserverTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var ValidatorInterface|MockObject
      */
@@ -68,14 +72,14 @@ class PayPalObserverTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $captchaResponseResolver = $this->getMockForAbstractClass(CaptchaResponseResolverInterface::class);
-        $validationConfigResolver = $this->getMockForAbstractClass(ValidationConfigResolverInterface::class);
-        $this->captchaValidator = $this->getMockForAbstractClass(ValidatorInterface::class);
+        $captchaResponseResolver = $this->createMock(CaptchaResponseResolverInterface::class);
+        $validationConfigResolver = $this->createMock(ValidationConfigResolverInterface::class);
+        $this->captchaValidator = $this->createMock(ValidatorInterface::class);
         $actionFlag = $this->createMock(ActionFlag::class);
-        $serializer = $this->getMockForAbstractClass(SerializerInterface::class);
-        $this->isCaptchaEnabled = $this->getMockForAbstractClass(IsCaptchaEnabledInterface::class);
-        $logger = $this->getMockForAbstractClass(LoggerInterface::class);
-        $errorMessageConfig = $this->getMockForAbstractClass(ErrorMessageConfigInterface::class);
+        $serializer = $this->createMock(SerializerInterface::class);
+        $this->isCaptchaEnabled = $this->createMock(IsCaptchaEnabledInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $errorMessageConfig = $this->createMock(ErrorMessageConfigInterface::class);
         $validationErrorMessagesProvider = $this->createMock(ValidationErrorMessagesProvider::class);
         $this->reCaptchaSession = $this->createMock(ReCaptchaSession::class);
         $this->model = new PayPalObserver(
@@ -90,15 +94,15 @@ class PayPalObserverTest extends TestCase
             $validationErrorMessagesProvider,
             $this->reCaptchaSession
         );
-        $controller = $this->getMockBuilder(AbstractAction::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRequest', 'getResponse'])
-            ->getMockForAbstractClass();
-        $request = $this->getMockForAbstractClass(RequestInterface::class);
-        $response = $this->getMockBuilder(ResponseInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['representJson'])
-            ->getMockForAbstractClass();
+        $controller = $this->createPartialMockWithReflection(
+            AbstractAction::class,
+            ['getRequest', 'getResponse', 'dispatch', 'execute']
+        );
+        $request = $this->createMock(RequestInterface::class);
+        $response = $this->createPartialMockWithReflection(
+            ResponseInterface::class,
+            ['representJson', 'sendResponse']
+        );
         $controller->method('getRequest')->willReturn($request);
         $controller->method('getResponse')->willReturn($response);
         $this->observer = new Observer(['controller_action' => $controller]);
@@ -107,8 +111,8 @@ class PayPalObserverTest extends TestCase
 
     /**
      * @param array $mocks
-     * @dataProvider executeDataProvider
      */
+    #[DataProvider('executeDataProvider')]
     public function testExecute(array $mocks): void
     {
         $this->configureMock($mocks);
@@ -132,7 +136,7 @@ class PayPalObserverTest extends TestCase
                     'reCaptchaSession' => [
                         [
                             'method' => 'save',
-                            'expects' => self::never(),
+                            'expects' => 'never',
                         ]
                     ]
                 ]
@@ -151,20 +155,20 @@ class PayPalObserverTest extends TestCase
                     'reCaptchaSession' => [
                         [
                             'method' => 'save',
-                            'expects' => self::never(),
+                            'expects' => 'never',
                         ]
                     ],
                     'captchaValidator' => [
                         [
                             'method' => 'isValid',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturnProperty' => 'validationResult'
                         ]
                     ],
                     'validationResult' => [
                         [
                             'method' => 'isValid',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => true,
                         ]
                     ]
@@ -184,20 +188,20 @@ class PayPalObserverTest extends TestCase
                     'reCaptchaSession' => [
                         [
                             'method' => 'save',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                         ]
                     ],
                     'captchaValidator' => [
                         [
                             'method' => 'isValid',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturnProperty' => 'validationResult'
                         ]
                     ],
                     'validationResult' => [
                         [
                             'method' => 'isValid',
-                            'expects' => self::once(),
+                            'expects' => 'once',
                             'willReturn' => true,
                         ]
                     ]
@@ -210,7 +214,9 @@ class PayPalObserverTest extends TestCase
     {
         foreach ($mocks as $prop => $propMocks) {
             foreach ($propMocks as $mock) {
-                $builder = $this->$prop->expects($mock['expects'] ?? $this->any());
+                $expectsValue = $mock['expects'] ?? 'any';
+                $expects = $this->createInvocationMatcher($expectsValue);
+                $builder = $this->$prop->expects($expects);
                 unset($mock['expects']);
                 foreach ($mock as $method => $args) {
                     if ($method === 'willReturnProperty') {
