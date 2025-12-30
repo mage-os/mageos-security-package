@@ -15,6 +15,7 @@ use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
 use Magento\User\Api\Data\UserInterface;
 use Duo\DuoUniversal\Client;
 use DuoAPI\Auth as DuoAuth;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -39,13 +40,8 @@ class DuoSecurityTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->configMock = $this->getMockBuilder(ScopeConfigInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->urlMock = $this->getMockBuilder(UrlInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
+        $this->urlMock = $this->createMock(UrlInterface::class);
 
         $this->clientMock = $this->createMock(Client::class);
         $this->duoAuthMock = $this->createMock(DuoAuth::class);
@@ -82,10 +78,11 @@ class DuoSecurityTest extends TestCase
      * @param string|null $apiHostname
      * @param string|null $clientId
      * @param string|null $clientSecret
+     * @param string $forceProviders
      * @param bool $expected
      * @return void
-     * @dataProvider getIsEnabledTestDataSet
      */
+    #[DataProvider('getIsEnabledTestDataSet')]
     public function testIsEnabled(
         ?string $apiHostname,
         ?string $clientId,

@@ -11,6 +11,7 @@ namespace Magento\TwoFactorAuth\Test\Unit\Model\Config\Backend\Duo;
 use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\TwoFactorAuth\Model\Config\Backend\Duo\ApiHostname;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ApiHostnameTest extends TestCase
@@ -29,9 +30,7 @@ class ApiHostnameTest extends TestCase
         $this->model = $objectManager->getObject(ApiHostname::class);
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testBefore($value, $isValid): void
     {
         if (!$isValid) {
