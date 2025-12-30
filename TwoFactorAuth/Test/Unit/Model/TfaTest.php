@@ -14,6 +14,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\TwoFactorAuth\Api\ProviderInterface;
 use Magento\TwoFactorAuth\Api\ProviderPoolInterface;
 use Magento\TwoFactorAuth\Model\Tfa;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +46,7 @@ class TfaTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->pool = $this->getMockForAbstractClass(ProviderPoolInterface::class);
+        $this->pool = $this->createMock(ProviderPoolInterface::class);
         $this->pool->method('getProviders')
             ->willReturnCallback(
                 function (): array {
@@ -61,7 +62,7 @@ class TfaTest extends TestCase
                     throw new NoSuchEntityException();
                 }
             );
-        $this->configMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
+        $this->configMock = $this->createMock(ScopeConfigInterface::class);
 
         $this->model = $objectManager->getObject(
             Tfa::class,
@@ -79,7 +80,7 @@ class TfaTest extends TestCase
     {
         $providers = [];
         foreach ($providersData as $code => $providerData) {
-            $provider = $this->getMockForAbstractClass(ProviderInterface::class);
+            $provider = $this->createMock(ProviderInterface::class);
             $provider->method('getCode')->willReturn($code);
             $provider->method('isEnabled')->willReturn($providerData['enabled']);
             $providers[$code] = $provider;
@@ -190,8 +191,8 @@ class TfaTest extends TestCase
      * @param array $providersList
      * @param array $expected
      * @return void
-     * @dataProvider getForcedProvidersDataSet
      */
+    #[DataProvider('getForcedProvidersDataSet')]
     public function testGetForcedProviders($configValue, array $providersList, $expected): void
     {
         $this->configMock->method('getValue')->willReturn($configValue);

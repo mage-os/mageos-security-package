@@ -20,6 +20,7 @@ use Magento\ReCaptchaWebapiApi\Api\WebapiValidationConfigProviderInterface;
 use Magento\ReCaptchaWebapiApi\Model\Data\Endpoint;
 use Magento\ReCaptchaWebapiApi\Model\Data\EndpointFactory;
 use Magento\ReCaptchaWebapiGraphQl\Plugin\GraphQlValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -53,8 +54,8 @@ class GraphQlValidatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->configProviderMock = $this->getMockForAbstractClass(WebapiValidationConfigProviderInterface::class);
-        $this->validatorMock = $this->getMockForAbstractClass(ValidatorInterface::class);
+        $this->configProviderMock = $this->createMock(WebapiValidationConfigProviderInterface::class);
+        $this->validatorMock = $this->createMock(ValidatorInterface::class);
         $this->endpointFactoryMock = $this->createMock(EndpointFactory::class);
         $this->model = new GraphQlValidator(
             $this->createMock(Http::class),
@@ -83,8 +84,8 @@ class GraphQlValidatorTest extends TestCase
      * @param bool $expectException Whether to expect an exception.
      * @throws GraphQlInputException
      * @return void
-     * @dataProvider getPluginCases
      */
+    #[DataProvider('getPluginCases')]
     public function testPlugin(bool $isMutation, bool $configFound, bool $isValid, bool $expectException): void
     {
         //Emulating query type
@@ -101,7 +102,7 @@ class GraphQlValidatorTest extends TestCase
         //Emulating config found
         $this->configProviderMock->method('getConfigFor')
             ->willReturn(
-                $configFound ? $this->getMockForAbstractClass(ValidationConfigInterface::class) : null
+                $configFound ? $this->createMock(ValidationConfigInterface::class) : null
             );
         //Emulating validation result
         $this->validatorMock->method('isValid')
@@ -113,7 +114,7 @@ class GraphQlValidatorTest extends TestCase
         }
 
         $this->model->beforeResolve(
-            $this->getMockForAbstractClass(ResolverInterface::class),
+            $this->createMock(ResolverInterface::class),
             $fieldMock,
             null,
             $infoMock
