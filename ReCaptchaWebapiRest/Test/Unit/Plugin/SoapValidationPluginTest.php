@@ -53,8 +53,8 @@ class SoapValidationPluginTest extends TestCase
         parent::setUp();
 
         $this->configMock = $this->createMock(Config::class);
-        $this->userContextMock = $this->getMockForAbstractClass(UserContextInterface::class);
-        $this->configProviderMock = $this->getMockForAbstractClass(WebapiValidationConfigProviderInterface::class);
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
+        $this->configProviderMock = $this->createMock(WebapiValidationConfigProviderInterface::class);
         $this->endpointFactory = $this->createMock(EndpointFactory::class);
         $this->model = new SoapValidationPlugin(
             $this->createMock(Request::class),

@@ -32,7 +32,7 @@ class ValidationOverriderTest extends TestCase
     {
         parent::setUp();
 
-        $this->userContextMock = $this->getMockForAbstractClass(UserContextInterface::class);
+        $this->userContextMock = $this->createMock(UserContextInterface::class);
         $this->model = new ValidationOverrider($this->userContextMock);
     }
 
