@@ -17,6 +17,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\User\Model\User;
 use Magento\TwoFactorAuth\Api\UserConfigTokenManagerInterface;
 use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Magento\Backend\Model\Session as SessionManager;
 use PHPUnit\Framework\TestCase;
@@ -64,18 +65,12 @@ class HtmlAreaTokenVerifierTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->requestMock = $this->getMockForAbstractClass(RequestInterface::class);
-        $this->tokenManagerMock = $this->getMockForAbstractClass(UserConfigTokenManagerInterface::class);
-        $this->cookiesMock = $this->getMockForAbstractClass(CookieManagerInterface::class);
-        $this->cookiesMetaFactoryMock = $this->getMockBuilder(CookieMetadataFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->sessionManagerMock = $this->getMockBuilder(SessionManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->tokenManagerMock = $this->createMock(UserConfigTokenManagerInterface::class);
+        $this->cookiesMock = $this->createMock(CookieManagerInterface::class);
+        $this->cookiesMetaFactoryMock = $this->createMock(CookieMetadataFactory::class);
+        $this->sessionMock = $this->createMock(Session::class);
+        $this->sessionManagerMock = $this->createMock(SessionManager::class);
 
         $this->model = $objectManager->getObject(
             HtmlAreaTokenVerifier::class,
@@ -167,8 +162,8 @@ class HtmlAreaTokenVerifierTest extends TestCase
      * @param bool $cookieSet
      * @param string|null $expected
      * @return void
-     * @dataProvider getTokenRequestData
      */
+    #[DataProvider('getTokenRequestData')]
     public function testReadConfigToken(
         bool $userPresent,
         ?string $fromRequest,
@@ -179,18 +174,15 @@ class HtmlAreaTokenVerifierTest extends TestCase
     ): void {
         $this->sessionMock->method('__call')
             ->willReturn(
-                $userPresent ? $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock() : null
+                $userPresent ? $this->createMock(User::class) : null
             );
         $this->requestMock->method('getParam')->with('tfat')->willReturn($fromRequest);
         $this->cookiesMock->method('getCookie')->with('tfa-ct')->willReturn($fromCookies);
         $this->tokenManagerMock->method('isValidFor')->willReturn($isValid);
         $this->sessionManagerMock->method('getCookiePath')->willReturn('admin_path');
+        $metaMock = $this->createMock(SensitiveCookieMetadata::class);
         $this->cookiesMetaFactoryMock->method('createSensitiveCookieMetadata')
-            ->willReturn(
-                $metaMock = $this->getMockBuilder(SensitiveCookieMetadata::class)
-                    ->disableOriginalConstructor()
-                    ->getMock()
-            );
+            ->willReturn($metaMock);
         if ($cookieSet) {
             $metaMock->expects($this->atLeastOnce())->method('setPath')->with('admin_path')->willReturn($metaMock);
             $this->cookiesMock->expects($this->once())

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Magento\TwoFactorAuth\Test\Unit\Model\Provider\Engine;
 
 use Magento\TwoFactorAuth\Model\Provider\Engine\Authy;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -31,7 +32,7 @@ class AuthyTest extends TestCase
     protected function setUp(): void
     {
         $objectManager = new ObjectManager($this);
-        $this->serviceMock = $this->getMockBuilder(Authy\Service::class)->disableOriginalConstructor()->getMock();
+        $this->serviceMock = $this->createMock(Authy\Service::class);
 
         $this->model = $objectManager->getObject(Authy::class, ['service' => $this->serviceMock]);
     }
@@ -61,8 +62,8 @@ class AuthyTest extends TestCase
      * @param string|null $apiKey
      * @param bool $expected
      * @return void
-     * @dataProvider getIsEnabledTestDataSet
      */
+    #[DataProvider('getIsEnabledTestDataSet')]
     public function testIsEnabled(?string $apiKey, bool $expected): void
     {
         $this->serviceMock->method('getApiKey')->willReturn((string)$apiKey);

@@ -18,6 +18,7 @@ use Magento\ReCaptchaWebapiApi\Model\Data\Endpoint;
 use Magento\ReCaptchaWebapiApi\Model\Data\EndpointFactory;
 use Magento\ReCaptchaWebapiRest\Plugin\RestValidationPlugin;
 use Magento\Webapi\Controller\Rest\RequestValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Magento\Webapi\Controller\Rest\Router;
@@ -58,8 +59,8 @@ class RestValidationPluginTest extends TestCase
     {
         parent::setUp();
 
-        $this->validatorMock = $this->getMockForAbstractClass(ValidatorInterface::class);
-        $this->configProvider = $this->getMockForAbstractClass(WebapiValidationConfigProviderInterface::class);
+        $this->validatorMock = $this->createMock(ValidatorInterface::class);
+        $this->configProvider = $this->createMock(WebapiValidationConfigProviderInterface::class);
         $this->router = $this->createMock(Router::class);
         $this->endpointFactory = $this->createMock(EndpointFactory::class);
         $this->subject = $this->createMock(RequestValidator::class);
@@ -88,8 +89,8 @@ class RestValidationPluginTest extends TestCase
      * @param bool $isValid Will validator validate the value.
      * @param bool $expectException Whether a webapi exception is expected.
      * @return void
-     * @dataProvider getPluginCases
      */
+    #[DataProvider('getPluginCases')]
     public function testPlugin(
         bool $configFound,
         bool $isValid,
@@ -109,7 +110,7 @@ class RestValidationPluginTest extends TestCase
         //Emulating config
         $this->configProvider->method('getConfigFor')
             ->willReturn(
-                $configFound ? $this->getMockForAbstractClass(ValidationConfigInterface::class) : null
+                $configFound ? $this->createMock(ValidationConfigInterface::class) : null
             );
         //Validation
         $validatedMock = $this->createMock(ValidationResult::class);

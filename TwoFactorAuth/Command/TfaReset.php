@@ -82,7 +82,7 @@ class TfaReset extends Command
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $userName = $input->getArgument('user');
         $providerCode = $input->getArgument('provider');
