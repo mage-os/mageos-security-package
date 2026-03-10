@@ -28,17 +28,17 @@ class Configure extends AbstractConfigureAction implements HttpGetActionInterfac
     /**
      * @var Tfa
      */
-    private $tfa;
+    private Tfa $tfa;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var PageFactory
      */
-    private $pageFactory;
+    private PageFactory $pageFactory;
 
     /**
      * @param Tfa $tfa

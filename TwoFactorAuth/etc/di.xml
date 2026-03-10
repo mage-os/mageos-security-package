@@ -23,6 +23,7 @@
     <preference for="Magento\TwoFactorAuth\Api\UserConfigManagerInterface"
                 type="Magento\TwoFactorAuth\Model\UserConfigManager"/>
     <preference for="Magento\TwoFactorAuth\Api\TfaSessionInterface" type="Magento\TwoFactorAuth\Model\TfaSession"/>
+    <preference for="Magento\TwoFactorAuth\Api\TfaProviderSessionInterface" type="Magento\TwoFactorAuth\Model\TfaProviderSession\Proxy"/>
     <preference for="Magento\TwoFactorAuth\Api\TfatActionsInterface" type="Magento\TwoFactorAuth\Model\TfatActions"/>
     <preference for="Magento\TwoFactorAuth\Model\AlertInterface" type="Magento\TwoFactorAuth\Model\Alert"/>
     <preference for="Magento\TwoFactorAuth\Api\GoogleConfigureInterface" type="Magento\TwoFactorAuth\Model\Provider\Engine\Google\Configure"/>
@@ -105,6 +106,9 @@
                 <item name="qr" xsi:type="string">tfa/google/qr</item>
                 <item name="configurepost" xsi:type="string">tfa/google/configurepost</item>
                 <item name="authpost" xsi:type="string">tfa/google/authpost</item>
+                <item name="verifyidentity" xsi:type="string">tfa/google/verifyidentity</item>
+                <item name="verifyidentitypost" xsi:type="string">tfa/google/verifyidentitypost</item>
+                <item name="providerselection" xsi:type="string">tfa/tfa/providerselection</item>
             </argument>
             <argument name="canReset" xsi:type="boolean">true</argument>
         </arguments>
@@ -120,6 +124,9 @@
             <argument name="authAction" xsi:type="string">tfa/duo/auth</argument>
             <argument name="extraActions" xsi:type="array">
                 <item name="authpost" xsi:type="string">tfa/duo/authpost</item>
+                <item name="verifyidentity" xsi:type="string">tfa/duo/verifyidentity</item>
+                <item name="verifyidentitypost" xsi:type="string">tfa/duo/verifyidentitypost</item>
+                <item name="providerselection" xsi:type="string">tfa/tfa/providerselection</item>
             </argument>
             <argument name="canReset" xsi:type="boolean">false</argument>
         </arguments>
@@ -141,6 +148,9 @@
                 <item name="token" xsi:type="string">tfa/authy/token</item>
                 <item name="onetouch" xsi:type="string">tfa/authy/onetouch</item>
                 <item name="verifyonetouch" xsi:type="string">tfa/authy/verifyonetouch</item>
+                <item name="verifyidentity" xsi:type="string">tfa/authy/verifyidentity</item>
+                <item name="verifyidentitypost" xsi:type="string">tfa/authy/verifyidentitypost</item>
+                <item name="providerselection" xsi:type="string">tfa/tfa/providerselection</item>
             </argument>
             <argument name="canReset" xsi:type="boolean">true</argument>
         </arguments>
@@ -157,6 +167,9 @@
             <argument name="extraActions" xsi:type="array">
                 <item name="configurepost" xsi:type="string">tfa/u2f/configurepost</item>
                 <item name="authpost" xsi:type="string">tfa/u2f/authpost</item>
+                <item name="verifyidentity" xsi:type="string">tfa/u2f/verifyidentity</item>
+                <item name="verifyidentitypost" xsi:type="string">tfa/u2f/verifyidentitypost</item>
+                <item name="providerselection" xsi:type="string">tfa/tfa/providerselection</item>
             </argument>
             <argument name="canReset" xsi:type="boolean">true</argument>
         </arguments>

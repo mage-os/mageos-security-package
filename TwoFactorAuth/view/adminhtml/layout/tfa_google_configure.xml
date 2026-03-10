@@ -37,6 +37,21 @@
                     <argument name="provider" xsi:type="string">google</argument>
                 </arguments>
             </block>
+            <block class="Magento\TwoFactorAuth\Block\ChangeProvider" name="change-provider"
+                   template="Magento_TwoFactorAuth::tfa/change_provider.phtml">
+
+                <arguments>
+                    <argument name="provider" xsi:type="string">google</argument>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="tfa-change-provider" xsi:type="array">
+                                <item name="component" xsi:type="string">Magento_TwoFactorAuth/js/change_provider</item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
+            <referenceBlock name="configure-later" remove="true"/>
         </referenceContainer>
     </body>
 </page>

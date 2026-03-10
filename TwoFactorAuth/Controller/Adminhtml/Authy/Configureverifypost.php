@@ -10,20 +10,25 @@ namespace Magento\TwoFactorAuth\Controller\Adminhtml\Authy;
 
 use Exception;
 use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\TwoFactorAuth\Model\AlertInterface;
 use Magento\TwoFactorAuth\Api\TfaInterface;
 use Magento\TwoFactorAuth\Api\TfaSessionInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
 use Magento\TwoFactorAuth\Model\Provider\Engine\Authy;
+use Magento\TwoFactorAuth\Model\Provider\Engine\Authy\Verification;
 use Magento\User\Model\User;
 use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
+use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
 
 /**
  * Verify authy
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class Configureverifypost extends AbstractConfigureAction implements HttpPostActionInterface
@@ -31,48 +36,55 @@ class Configureverifypost extends AbstractConfigureAction implements HttpPostAct
     /**
      * @var JsonFactory
      */
-    private $jsonFactory;
+    private JsonFactory $jsonFactory;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var TfaInterface
      */
-    private $tfa;
+    private TfaInterface $tfa;
 
     /**
      * @var Authy
      */
-    private $authy;
+    private Authy $authy;
 
     /**
      * @var TfaSessionInterface
      */
-    private $tfaSession;
+    private TfaSessionInterface $tfaSession;
 
     /**
      * @var AlertInterface
      */
-    private $alert;
+    private AlertInterface $alert;
 
     /**
      * @var Authy\Verification
      */
-    private $verification;
+    private Verification $verification;
 
     /**
-     * @param Action\Context $context
+     * @var UserConfigManagerInterface
+     */
+    private $userConfigManager;
+
+    /**
+     * @param Context $context
      * @param Session $session
      * @param TfaInterface $tfa
      * @param TfaSessionInterface $tfaSession
      * @param AlertInterface $alert
      * @param Authy $authy
-     * @param Authy\Verification $verification
+     * @param Verification $verification
      * @param JsonFactory $jsonFactory
      * @param HtmlAreaTokenVerifier $tokenVerifier
+     * @param UserConfigManagerInterface|null $userConfigManager
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Action\Context $context,
@@ -83,7 +95,8 @@ class Configureverifypost extends AbstractConfigureAction implements HttpPostAct
         Authy $authy,
         Authy\Verification $verification,
         JsonFactory $jsonFactory,
-        HtmlAreaTokenVerifier $tokenVerifier
+        HtmlAreaTokenVerifier $tokenVerifier,
+        ?UserConfigManagerInterface $userConfigManager = null
     ) {
         parent::__construct($context, $tokenVerifier);
         $this->jsonFactory = $jsonFactory;
@@ -93,6 +106,8 @@ class Configureverifypost extends AbstractConfigureAction implements HttpPostAct
         $this->alert = $alert;
         $this->verification = $verification;
         $this->authy = $authy;
+        $this->userConfigManager = $userConfigManager
+            ?: ObjectManager::getInstance()->get(UserConfigManagerInterface::class);
     }
 
     /**
@@ -128,6 +143,7 @@ class Configureverifypost extends AbstractConfigureAction implements HttpPostAct
             $response->setData([
                 'success' => true,
             ]);
+            $this->userConfigManager->setDefaultProvider((int) $this->getUser()->getId(), Authy::CODE);
         } catch (Exception $e) {
             $this->alert->event(
                 'Magento_TwoFactorAuth',
