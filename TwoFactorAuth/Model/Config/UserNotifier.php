@@ -70,4 +70,15 @@ class UserNotifier
     {
         return $this->url->getUrl('tfa/tfa/index', ['tfat' => $tfaToken]);
     }
+
+    /**
+     * Get the url to send to the user for configuring new 2fa provider
+     *
+     * @param string $tfaToken
+     * @return string
+     */
+    public function getIdentityVerificationUrl(string $tfaToken): string
+    {
+        return $this->url->getUrl('tfa/tfa/verifyidentityrequest', ['tfat' => $tfaToken]);
+    }
 }

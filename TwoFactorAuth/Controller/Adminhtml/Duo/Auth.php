@@ -8,13 +8,16 @@ declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Controller\Adminhtml\Duo;
 
+use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\TwoFactorAuth\Api\TfaInterface;
+use Magento\TwoFactorAuth\Api\TfaProviderSessionInterface;
 use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
 use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractAction;
 use Magento\TwoFactorAuth\Model\Provider\Engine\DuoSecurity;
@@ -29,32 +32,32 @@ class Auth extends AbstractAction implements HttpGetActionInterface
     /**
      * @var TfaInterface
      */
-    private $tfa;
+    private TfaInterface $tfa;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var PageFactory
      */
-    private $pageFactory;
+    private PageFactory $pageFactory;
 
     /**
      * @var UserConfigManagerInterface
      */
-    private $userConfigManager;
+    private UserConfigManagerInterface $userConfigManager;
 
     /**
      * @var HtmlAreaTokenVerifier
      */
-    private $tokenVerifier;
+    private HtmlAreaTokenVerifier $tokenVerifier;
 
     /**
      * @var DuoSecurity
      */
-    private $duoSecurity;
+    private DuoSecurity $duoSecurity;
     /**
      * @var ManagerInterface
      */
@@ -65,13 +68,19 @@ class Auth extends AbstractAction implements HttpGetActionInterface
     protected $resultRedirectFactory;
 
     /**
-     * @param Action\Context $context
+     * @var TfaProviderSessionInterface
+     */
+    private TfaProviderSessionInterface $tfaProviderSession;
+
+    /**
+     * @param Context $context
      * @param Session $session
      * @param PageFactory $pageFactory
      * @param UserConfigManagerInterface $userConfigManager
      * @param TfaInterface $tfa
      * @param HtmlAreaTokenVerifier $tokenVerifier
      * @param DuoSecurity $duoSecurity
+     * @param TfaProviderSessionInterface|null $tfaProviderSession
      */
     public function __construct(
         Action\Context $context,
@@ -80,7 +89,8 @@ class Auth extends AbstractAction implements HttpGetActionInterface
         UserConfigManagerInterface $userConfigManager,
         TfaInterface $tfa,
         HtmlAreaTokenVerifier $tokenVerifier,
-        DuoSecurity $duoSecurity
+        DuoSecurity $duoSecurity,
+        ?TfaProviderSessionInterface $tfaProviderSession = null
     ) {
         parent::__construct($context);
         $this->tfa = $tfa;
@@ -91,6 +101,8 @@ class Auth extends AbstractAction implements HttpGetActionInterface
         $this->duoSecurity = $duoSecurity;
         $this->messageManager = $context->getMessageManager();
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
+        $this->tfaProviderSession = $tfaProviderSession
+            ?: ObjectManager::getInstance()->get(TfaProviderSessionInterface::class);
     }
 
     /**
@@ -125,9 +137,11 @@ class Auth extends AbstractAction implements HttpGetActionInterface
 
         $resultPage = $this->pageFactory->create();
         $block = $resultPage->getLayout()->getBlock('content');
+
         if ($block) {
             $block->setData('auth_url', $response['redirect_url']);
         }
+
         return $resultPage;
     }
 
