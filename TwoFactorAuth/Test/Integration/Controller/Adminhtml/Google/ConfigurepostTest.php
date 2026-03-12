@@ -20,12 +20,12 @@ use Magento\TwoFactorAuth\TestFramework\TestCase\AbstractConfigureBackendControl
 class ConfigurepostTest extends AbstractConfigureBackendController
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $uri = 'backend/tfa/google/configurepost';
 
     /**
-     * @inheritDoc
+     * @var string
      */
     protected $httpMethod = Request::METHOD_POST;
 
@@ -37,6 +37,7 @@ class ConfigurepostTest extends AbstractConfigureBackendController
     public function testTokenAccess(): void
     {
         parent::testTokenAccess();
+        $this->assertRedirect($this->stringContains('requestconfig'));
     }
 
     /**
@@ -46,6 +47,7 @@ class ConfigurepostTest extends AbstractConfigureBackendController
      */
     public function testAclHasAccess()
     {
+        $this->expectedNoAccessResponseCode = 200;
         parent::testAclHasAccess();
     }
 

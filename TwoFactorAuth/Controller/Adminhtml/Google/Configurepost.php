@@ -8,9 +8,11 @@ declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Controller\Adminhtml\Google;
 
+use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
@@ -23,10 +25,12 @@ use Magento\TwoFactorAuth\Controller\Adminhtml\AbstractConfigureAction;
 use Magento\TwoFactorAuth\Model\Provider\Engine\Google;
 use Magento\User\Model\User;
 use Magento\TwoFactorAuth\Model\UserConfig\HtmlAreaTokenVerifier;
+use Magento\TwoFactorAuth\Api\UserConfigManagerInterface;
 
 /**
  * Google authenticator configuration post controller
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class Configurepost extends AbstractConfigureAction implements HttpPostActionInterface
@@ -34,40 +38,45 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
     /**
      * @var TfaInterface
      */
-    private $tfa;
+    private TfaInterface $tfa;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var JsonFactory
      */
-    private $jsonFactory;
+    private JsonFactory $jsonFactory;
 
     /**
      * @var Google
      */
-    private $google;
+    private Google $google;
 
     /**
      * @var TfaSessionInterface
      */
-    private $tfaSession;
+    private TfaSessionInterface $tfaSession;
 
     /**
      * @var DataObjectFactory
      */
-    private $dataObjectFactory;
+    private DataObjectFactory $dataObjectFactory;
 
     /**
      * @var AlertInterface
      */
-    private $alert;
+    private AlertInterface $alert;
 
     /**
-     * @param Action\Context $context
+     * @var UserConfigManagerInterface
+     */
+    private mixed $userConfigManager;
+
+    /**
+     * @param Context $context
      * @param Session $session
      * @param JsonFactory $jsonFactory
      * @param Google $google
@@ -76,6 +85,8 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
      * @param AlertInterface $alert
      * @param DataObjectFactory $dataObjectFactory
      * @param HtmlAreaTokenVerifier $tokenVerifier
+     * @param UserConfigManagerInterface|null $userConfigManager
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Action\Context $context,
@@ -86,7 +97,8 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
         TfaInterface $tfa,
         AlertInterface $alert,
         DataObjectFactory $dataObjectFactory,
-        HtmlAreaTokenVerifier $tokenVerifier
+        HtmlAreaTokenVerifier $tokenVerifier,
+        ?UserConfigManagerInterface $userConfigManager = null
     ) {
         parent::__construct($context, $tokenVerifier);
         $this->tfa = $tfa;
@@ -96,6 +108,8 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
         $this->tfaSession = $tfaSession;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->alert = $alert;
+        $this->userConfigManager = $userConfigManager
+            ?: ObjectManager::getInstance()->get(UserConfigManagerInterface::class);
     }
 
     /**
@@ -136,6 +150,7 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
             $response->setData([
                 'success' => true,
             ]);
+            $this->userConfigManager->setDefaultProvider((int) $this->getUser()->getId(), Google::CODE);
         } else {
             $response->setData([
                 'success' => false,

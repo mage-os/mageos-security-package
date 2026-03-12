@@ -51,6 +51,7 @@
                     <argument name="provider" xsi:type="string">duo_security</argument>
                 </arguments>
             </block>
+            <referenceBlock name="configure-later" remove="true"/>
         </referenceContainer>
     </body>
 </page>
