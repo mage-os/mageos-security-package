@@ -235,7 +235,10 @@ define(
                     $parentForm = $wrapper.parents('form');
 
                 if (!this._apiLoaded) {
-                    if ($parentForm.length) {
+                    if (window.grecaptcha && window.grecaptcha.render) {
+                        // API already present, skip deferred load
+                        this._apiLoaded = true;
+                    } else if ($parentForm.length) {
                         this._deferApiLoad($parentForm);
                     } else {
                         this._apiLoaded = true;
