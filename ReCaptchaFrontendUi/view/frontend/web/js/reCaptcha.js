@@ -28,16 +28,34 @@ define(
              */
             initialize: function () {
                 this._super();
-
-                this.attachFocusEvent();
+                this._apiLoaded = false;
             },
 
-            attachFocusEvent: function () {
-                const self = this, $parentForm = $('#' + this.getReCaptchaId() + '-container').parents('form');
+            /**
+             * Defers reCAPTCHA API loading until the form DOM exists.
+             * Loads on first form field focus, with an idle-callback fallback
+             * for iframes and programmatic-submit scenarios.
+             *
+             * @param {jQuery} $parentForm
+             * @private
+             */
+            _deferApiLoad: function ($parentForm) {
+                var self = this,
+                    load = function () {
+                        if (!self._apiLoaded) {
+                            self._apiLoaded = true;
+                            $parentForm.off('focus.recaptcha', 'input, select, textarea', load);
+                            self._loadApi();
+                        }
+                    };
 
-                $parentForm.one('focus', 'input, select, textarea', function () {
-                    self._loadApi();
-                });
+                $parentForm.one('focus.recaptcha', 'input, select, textarea', load);
+
+                if (window.requestIdleCallback) {
+                    window.requestIdleCallback(load, {timeout: 3000});
+                } else {
+                    setTimeout(load, 1000);
+                }
             },
 
             /**
@@ -213,10 +231,25 @@ define(
              * Render reCAPTCHA
              */
             renderReCaptcha: function () {
-                if (window.grecaptcha && window.grecaptcha.render) { // Check if reCAPTCHA is already loaded
+                var $wrapper = $('#' + this.getReCaptchaId() + '-wrapper'),
+                    $parentForm = $wrapper.parents('form');
+
+                if (!this._apiLoaded) {
+                    if (window.grecaptcha && window.grecaptcha.render) {
+                        // API already present, skip deferred load
+                        this._apiLoaded = true;
+                    } else if ($parentForm.length) {
+                        this._deferApiLoad($parentForm);
+                    } else {
+                        this._apiLoaded = true;
+                        this._loadApi();
+                    }
+                }
+
+                if (window.grecaptcha && window.grecaptcha.render) {
                     this.initCaptcha();
-                } else { // Wait for reCAPTCHA to be loaded
-                    $(window).on('recaptchaapiready', function () {
+                } else {
+                    $(window).one('recaptchaapiready', function () {
                         this.initCaptcha();
                     }.bind(this));
                 }
