@@ -21,4 +21,8 @@
     <type name="Magento\Backend\Model\Auth">
         <plugin name="delete_tfat_cookie" type="Magento\TwoFactorAuth\Plugin\DeleteCookieOnLogout"/>
     </type>
+
+    <type name="Magento\TwoFactorAuth\Block\ChangeProvider">
+        <plugin name="update_jslayout" type="Magento\TwoFactorAuth\Plugin\Block\ChangeProvider"/>
+    </type>
 </config>

@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaPaypal\Test\Unit\Model;
@@ -13,9 +14,12 @@ use Magento\Quote\Api\Data\CartInterface;
 use Magento\ReCaptchaPaypal\Model\ReCaptchaSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Magento\Framework\TestFramework\Unit\Helper\MockCreationTrait;
 
 class ReCaptchaSessionTest extends TestCase
 {
+    use MockCreationTrait;
+
     /**
      * @var TimezoneInterface|MockObject
      */
@@ -42,16 +46,15 @@ class ReCaptchaSessionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->timezone = $this->getMockForAbstractClass(TimezoneInterface::class);
-        $this->transparentSession = $this->getMockBuilder(SessionManager::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getData'])
-            ->addMethods(['setData', 'unsetData'])
-            ->getMock();
-        $this->checkoutSession = $this->getMockBuilder(SessionManager::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getQuote'])
-            ->getMock();
+        $this->timezone = $this->createMock(TimezoneInterface::class);
+        $this->transparentSession = $this->createPartialMockWithReflection(
+            SessionManager::class,
+            ['getData', 'setData', 'unsetData']
+        );
+        $this->checkoutSession = $this->createPartialMockWithReflection(
+            SessionManager::class,
+            ['getQuote']
+        );
         $this->model = new ReCaptchaSession(
             $this->timezone,
             $this->transparentSession,
@@ -69,7 +72,7 @@ class ReCaptchaSessionTest extends TestCase
 
     public function testSaveIfThereIsActiveQuote(): void
     {
-        $quote = $this->getMockForAbstractClass(CartInterface::class);
+        $quote = $this->createMock(CartInterface::class);
         $quote->expects($this->once())
             ->method('getId')
             ->willReturn(1);

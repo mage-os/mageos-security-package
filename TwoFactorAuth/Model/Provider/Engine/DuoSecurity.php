@@ -60,29 +60,34 @@ class DuoSecurity implements EngineInterface
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    private ScopeConfigInterface $scopeConfig;
 
     /**
      * @var Client
      */
-    private $client;
+    private Client $client;
 
     /**
      * @var DuoAuth
      */
-    private $duoAuth;
+    private DuoAuth $duoAuth;
 
     /**
      * @var UrlInterface
      */
-    private $urlBuilder;
+    private UrlInterface $urlBuilder;
+
+    /**
+     * @var string|null
+     */
+    private ?string $userIdentityCallBackUrl = null;
 
     /**
      * @param ScopeConfigInterface $scopeConfig
      * @param UrlInterface $urlBuilder
      * @param Client|null $client
      * @param DuoAuth|null $duoAuth
-     * @throws \Duo\DuoUniversal\DuoException
+     * @throws DuoException
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
@@ -148,6 +153,21 @@ class DuoSecurity implements EngineInterface
     }
 
     /**
+     * Get user identity callback URL
+     *
+     * @param string $url
+     * @return string|null
+     */
+    public function setUserIdentityCallbackUrl(string $url): ?string
+    {
+        if (!$this->userIdentityCallBackUrl) {
+            return $this->userIdentityCallBackUrl = $this->urlBuilder->getUrl($url);
+        }
+
+        return null;
+    }
+
+    /**
      * Get Integration Key
      *
      * @return string
@@ -173,7 +193,7 @@ class DuoSecurity implements EngineInterface
      * @param UserInterface $user
      * @param DataObject $request
      * @return bool
-     * @throws \Duo\DuoUniversal\DuoException
+     * @throws DuoException
      */
     public function verify(UserInterface $user, DataObject $request): bool
     {
@@ -181,6 +201,16 @@ class DuoSecurity implements EngineInterface
         $username = $user->getUserName();
 
         try {
+            /**
+             * Need new object of client class as callback url will be updated based on session variable.
+             */
+            $this->client = new Client(
+                $this->getClientId(),
+                $this->getClientSecret(),
+                $this->getApiHostname(),
+                $this->userIdentityCallBackUrl ?? $this->getCallbackUrl()
+            );
+
             // Not saving token as this is for verification purpose
             $this->client->exchangeAuthorizationCodeFor2FAResult($duoCode, $username);
         } catch (DuoException $e) {
@@ -222,7 +252,7 @@ class DuoSecurity implements EngineInterface
      * @param string $username
      * @param string $state
      * @return array
-     * @throws \Duo\DuoUniversal\DuoException
+     * @throws DuoException
      */
     public function initiateAuth($username, string $state): array
     {
@@ -236,6 +266,16 @@ class DuoSecurity implements EngineInterface
                 ];
         }
 
+        /**
+         * Need new object of client class as callback url will be updated based on session variable.
+         */
+        $this->client = new Client(
+            $this->getClientId(),
+            $this->getClientSecret(),
+            $this->getApiHostname(),
+            $this->userIdentityCallBackUrl ?? $this->getCallbackUrl()
+        );
+
         return [
             'status' => 'success',
             'redirect_url' => $this->client->createAuthUrl($username, $state),
@@ -247,7 +287,7 @@ class DuoSecurity implements EngineInterface
      * Health check for Duo Universal prompt.
      *
      * @return void
-     * @throws \Duo\DuoUniversal\DuoException
+     * @throws DuoException
      */
     public function healthCheck(): void
     {

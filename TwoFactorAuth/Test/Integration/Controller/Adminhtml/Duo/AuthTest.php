@@ -42,6 +42,7 @@ class AuthTest extends AbstractConfigureBackendController
     public function testTokenAccess(): void
     {
         parent::testTokenAccess();
+        $this->assertRedirect($this->stringContains('auth/login'));
     }
 
     /**

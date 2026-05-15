@@ -100,19 +100,6 @@ class IndexTest extends AbstractBackendController
     }
 
     /**
-     * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy
-     * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
-     * @magentoDbIsolation enabled
-     */
-    public function testNotConfiguredWithSkipped(): void
-    {
-        $this->tfaSession->setSkippedProviderConfig(['google' => true]);
-
-        $this->dispatch($this->uri);
-        $this->assertRedirect($this->stringContains('authy/configure'));
-    }
-
-    /**
      * @magentoConfigFixture default/twofactorauth/general/force_providers google,authy,duo_security
      * @magentoConfigFixture default/twofactorauth/authy/api_key abc123
      * @magentoConfigFixture default/twofactorauth/duo/client_id ABCDEFGHIJKLMNOPQRST

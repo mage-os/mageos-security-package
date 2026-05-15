@@ -1,9 +1,9 @@
 <?php
 /**
  * Copyright 2024 Adobe
- * All rights reserved.
- * See COPYING.txt for license details.
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaPaypal\Test\Unit\Block\LayoutProcessor\Checkout;
@@ -13,6 +13,7 @@ use Magento\Paypal\Model\Config;
 use Magento\ReCaptchaPaypal\Block\LayoutProcessor\Checkout\Onepage;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\UiConfigResolverInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -79,17 +80,15 @@ class OnepageTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->uiConfigResolver = $this->getMockForAbstractClass(UiConfigResolverInterface::class);
-        $this->isCaptchEnabled = $this->getMockForAbstractClass(IsCaptchaEnabledInterface::class);
+        $this->uiConfigResolver = $this->createMock(UiConfigResolverInterface::class);
+        $this->isCaptchEnabled = $this->createMock(IsCaptchaEnabledInterface::class);
         $this->model = new Onepage(
             $this->uiConfigResolver,
             $this->isCaptchEnabled
         );
     }
 
-    /**
-     * @dataProvider processDataProvider
-     */
+    #[DataProvider('processDataProvider')]
     public function testProcess(array $mocks, array $expected): void
     {
         $this->uiConfigResolver->method('get')
