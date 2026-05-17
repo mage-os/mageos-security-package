@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\TwoFactorAuth\Controller\Adminhtml\U2f;
@@ -30,37 +31,37 @@ class Configurepost extends AbstractConfigureAction implements HttpPostActionInt
     /**
      * @var Tfa
      */
-    private $tfa;
+    private Tfa $tfa;
 
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * @var U2fKey
      */
-    private $u2fKey;
+    private U2fKey $u2fKey;
 
     /**
      * @var JsonFactory
      */
-    private $jsonFactory;
+    private JsonFactory $jsonFactory;
 
     /**
      * @var TfaSessionInterface
      */
-    private $tfaSession;
+    private TfaSessionInterface $tfaSession;
 
     /**
      * @var AlertInterface
      */
-    private $alert;
+    private AlertInterface $alert;
 
     /**
      * @var U2fSession
      */
-    private $u2fSession;
+    private U2fSession $u2fSession;
 
     /**
      * @param Tfa $tfa

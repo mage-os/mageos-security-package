@@ -1,9 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 /** @var $block Magento\ReCaptchaUi\Block\ReCaptcha */
+/** @var $escaper \Magento\Framework\Escaper */
 $config = $block->getCaptchaUiConfig();
 $renderingOptions = $config['rendering'] ?? [];
 $isInvisible = !empty($config['invisible']);
@@ -67,7 +69,7 @@ $isInvisible = !empty($config['invisible']);
 
             widgetId = grecaptcha.render('admin-recaptcha', {
                 <?php foreach ($renderingOptions as $key => $value): ?>
-                    '<?= $block->escapeJs($key) ?>': '<?= $block->escapeJs($value) ?>',
+                    '<?= $escaper->escapeJs($key) ?>': '<?= $escaper->escapeJs($value) ?>',
                 <?php endforeach; ?> 'callback': function (_token) {
                     <?php if ($isInvisible): ?>
                     token = _token;

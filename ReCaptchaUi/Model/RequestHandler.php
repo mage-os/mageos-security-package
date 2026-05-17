@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaUi\Model;
@@ -111,8 +112,8 @@ class RequestHandler implements RequestHandlerInterface
         try {
             $reCaptchaResponse = $this->captchaResponseResolver->resolve($request);
         } catch (InputException $e) {
-            $this->logger->error($e);
-            $this->processError($response, [], $redirectOnFailureUrl, $key);
+            $errorMessages['missing-input-response'] = $e->getMessage();
+            $this->processError($response, $errorMessages, $redirectOnFailureUrl, $key);
             return;
         }
 

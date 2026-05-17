@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaSendFriend\Observer;
@@ -15,9 +16,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\ReCaptchaUi\Model\IsCaptchaEnabledInterface;
 use Magento\ReCaptchaUi\Model\RequestHandlerInterface;
 
-/**
- * SendFriendObserver
- */
 class SendFriendObserver implements ObserverInterface
 {
     /**
@@ -51,6 +49,8 @@ class SendFriendObserver implements ObserverInterface
     }
 
     /**
+     * Checking if captcha enabled for sendfriend, validate it
+     *
      * @param Observer $observer
      * @return void
      * @throws LocalizedException

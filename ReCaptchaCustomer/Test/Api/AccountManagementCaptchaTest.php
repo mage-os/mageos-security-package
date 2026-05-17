@@ -1,8 +1,9 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
  */
+
 declare(strict_types=1);
 
 namespace Magento\ReCaptchaCustomer\Test\Api;
@@ -12,7 +13,6 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 use Magento\Framework\Webapi\Rest\Request;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
-
 
 /**
  * Test class for Magento\Customer\Api\AccountManagementInterface
@@ -132,5 +132,4 @@ class AccountManagementCaptchaTest extends WebapiAbstract
 
         $this->_webApiCall($serviceInfo, $requestData);
     }
-
 }
